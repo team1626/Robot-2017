@@ -24,7 +24,8 @@ public class Robot extends IterativeRobot {
 	
 	private RobotDrive drive;
 	
-	private XboxController xbox;
+	private XboxController driverController;
+	private XboxController shooterController;
 	
 	private Talon pickUpTalon;
 	private Talon shooterOneTalon;
@@ -42,7 +43,7 @@ public class Robot extends IterativeRobot {
 		backRight          = new TalonSRX(3);
 		
 		drive              = new RobotDrive(frontLeft, backLeft, frontRight, backRight);
-		xbox               = new XboxController(1);
+		driverController   = new XboxController(1);
 		
 		pickUpTalon        = new Talon(4);
 		shooterOneTalon    = new Talon(5);
@@ -54,31 +55,26 @@ public class Robot extends IterativeRobot {
 	
 	@Override
 	public void autonomousInit() {
-		
 	}
 
 	@Override
 	public void autonomousPeriodic() {
-		
 	}
 
 	@Override
 	public void teleopPeriodic() {
-		double leftAxisValue = xbox.getRawAxis(2);
-		double rightAxisValue = xbox.getRawAxis(5);
+		double leftAxisValue = driverController.getRawAxis(2);
+		double rightAxisValue = driverController.getRawAxis(5);
 		drive.tankDrive(leftAxisValue, rightAxisValue);
 		
-		// TODO - make sure solenoid values are correct
-		if (xbox.getStickButton() == true && highGear == true) {
+		// TODO - make sure solenoid values are correct (rn kFoward shifts to low gear)
+		if (driverController.getStickButton() == true && highGear == true) {
 			gearShifter.set(DoubleSolenoid.Value.kForward);
 			highGear = false;
-		} else if (xbox.getStickButton() == true && highGear == false) {
+		} else if (driverController.getStickButton() == true && highGear == false) {
 			gearShifter.set(DoubleSolenoid.Value.kReverse);
 			highGear = true;
 		}
-		
-		// TODO - control for pickup, shooter, winch
-		
 	}
 
 	@Override
