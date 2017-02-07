@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Utility;
@@ -32,7 +32,7 @@ public class ActionRecorder
 	private StateButton recordButton;
 	private List<File> autoFileList;
 	private int autoFileIndex;
-	private File fileToRecord=null;
+	private File fileToRecord=null; 
 	
 	// For timing accuracy measurements
 	
@@ -46,14 +46,14 @@ public class ActionRecorder
 	public class StateButton
 	{
 		private int buttonNumber;
-		private Joystick controller;
+		private XboxController controller;
 		private boolean prevState;
 		
-		public StateButton(Joystick stick, int button)
+		public StateButton(XboxController stick, int button)
 		{
-			controller=stick;
-			buttonNumber=button;
-			prevState=false;
+			controller = stick;
+			buttonNumber = button;
+			prevState = false;
 		}
 		
 		public boolean getState()
@@ -101,23 +101,23 @@ public class ActionRecorder
 		return this;
 	}
 
-	public ActionRecorder setController(Joystick stick)
+	public ActionRecorder setController(XboxController stick)
 	{
 		return this;
 	}
 
-	public ActionRecorder setUpButton(Joystick stick, int up)
+	public ActionRecorder setUpButton(XboxController stick, int up)
 	{
 		upButton=new StateButton(stick, up);
 		return this;
 	}
 
-	public ActionRecorder setDownButton(Joystick stick, int down)
+	public ActionRecorder setDownButton(XboxController stick, int down)
 	{
 		downButton=new StateButton(stick, down);
 		return this;
 	}
-	public ActionRecorder setRecordButton(Joystick stick, int rec)
+	public ActionRecorder setRecordButton(XboxController stick, int rec)
 	{
 		recordButton=new StateButton(stick, rec);
 		return this;
