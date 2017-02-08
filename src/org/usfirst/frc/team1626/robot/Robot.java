@@ -5,13 +5,18 @@ import edu.wpi.first.wpilibj.TalonSRX;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Talon;
 
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
+
 import java.lang.reflect.InvocationTargetException;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.RobotDrive;
 
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Talon VII :: Robot
@@ -29,13 +34,15 @@ public class Robot extends IterativeRobot {
 	private TalonSRX backRight;
 	
 	private RobotDrive drive;
-	
+
 	private XboxController xbox;
 	
 	private Talon pickUpTalon;
 	private Talon shooterOneTalon;
 	private Talon shooterTwoTalon;
 	private Talon winchTalon;
+	
+	private PowerDistributionPanel pdp;
 	
 	private DoubleSolenoid gearShifter;
 	boolean highGear = true;
@@ -44,7 +51,9 @@ public class Robot extends IterativeRobot {
 	ActionRecorder actions;
 		
 	@Override
-	public void robotInit() {		
+	public void robotInit() {
+		// TODO - Convert to CANTalon code
+		// jake senkewicz left his mark on the robootics code
 		frontLeft          = new TalonSRX(0);
 		frontRight         = new TalonSRX(1);
 		backLeft           = new TalonSRX(2);
@@ -58,6 +67,8 @@ public class Robot extends IterativeRobot {
 		shooterTwoTalon    = new Talon(6);
 		winchTalon         = new Talon(7);
 		
+		pdp                = new PowerDistributionPanel(0);
+		
 		gearShifter        = new DoubleSolenoid(0, 1);
 		
 		actions 		   = new ActionRecorder();
@@ -67,7 +78,7 @@ public class Robot extends IterativeRobot {
 			setRecordButton(xbox, 3);
 		DriverInput.nameInput("LeftTriggerAxis");
 		DriverInput.nameInput("RightTriggerAxis");
-	}
+	} 
 	
 	@Override
 	public void autonomousInit() {
@@ -105,15 +116,6 @@ public class Robot extends IterativeRobot {
 		double rightAxisValue = xbox.getRawAxis(5);
 		drive.tankDrive(leftAxisValue, rightAxisValue);
 		
-		// TODO - make sure solenoid values are correct (rn kFoward shifts to low gear)
-		if (xbox.getStickButton() == true && highGear == true) {
-			gearShifter.set(DoubleSolenoid.Value.kForward);
-			highGear = false;
-		} else if (xbox.getStickButton() == true && highGear == false) {
-			gearShifter.set(DoubleSolenoid.Value.kReverse);
-			highGear = true;
-		}
-		
 		try {
 		actions.input(new DriverInput(xbox.getRawAxis(2),
 									  xbox.getRawAxis(5)));
@@ -126,6 +128,31 @@ public class Robot extends IterativeRobot {
 		} catch (InvocationTargetException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		
+		if (xbox.getBumper() == true) {
+			// testSolenoid.set(DoubleSolenoid.Value.kReverse);
+			pickUpTalon.set(-.99);
+		} else if (xbox.getBumper() == true) {
+			pickUpTalon.set(.99);
+		} else {
+			pickUpTalon.set(0);
+		}
+		
+		// TODO - make sure solenoid values are correct (rn kFoward shifts to low gear)
+		if (xbox.getStickButton() == true && highGear == true) {
+			gearShifter.set(DoubleSolenoid.Value.kForward);
+			highGear = false;
+		} else if (xbox.getStickButton() == true && highGear == false) {
+			gearShifter.set(DoubleSolenoid.Value.kReverse);
+			highGear = true;
+		}
+		
+		SmartDashboard.putNumber("Voltage", pdp.getVoltage());
+		// RoboRIO Brownout triggers @ 6.8V
+		if (pdp.getVoltage() <= 7.0) {
+			xbox.setRumble(RumbleType.kLeftRumble, 1.0);
+			xbox.setRumble(RumbleType.kRightRumble, 1.0);
 		}
 	}
 	
