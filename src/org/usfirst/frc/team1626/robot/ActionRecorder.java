@@ -2,10 +2,6 @@ package org.usfirst.frc.team1626.robot;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -132,6 +128,7 @@ public class ActionRecorder
 		recording=true;
 		recordingReady=false;
 		SmartDashboard.putBoolean("Auto/Recording", true);
+		SmartDashboard.putBoolean("DB/LED 0", true);
 	}
 	
 	public boolean isRecording()
@@ -143,6 +140,7 @@ public class ActionRecorder
 	{
 		recording=false;
 		SmartDashboard.putBoolean("Auto/Recording", false);
+		SmartDashboard.putBoolean("DB/LED 0", false);
 	}
 
 	public void toggleRecording()
@@ -159,6 +157,7 @@ public class ActionRecorder
 	public void displayName()
 	{
 		SmartDashboard.putString("Auto/FileName", autoFileList.get(autoFileIndex).getName());
+		SmartDashboard.putString("DB/String 0", autoFileList.get(autoFileIndex).getName());
 	}
 	
 	private int getAutoFileList()
@@ -212,7 +211,7 @@ public class ActionRecorder
 			for (DriverInput input: driverInputs)
 			{
 				outFile.write(input.toString());
-				outFile.write("\n");				
+				outFile.write("\n");
 			}
 			
 			outFile.close();
@@ -389,10 +388,16 @@ public class ActionRecorder
 //				System.out.println("Line was <" + line + ">");
 				String[] tokens = line.split(";");
 				int timeOffset = Integer.parseInt(tokens[0]);
-				Object[] drIn = new Double[tokens.length-1];
+				Object[] drIn = new Object[tokens.length-1];
 				for (int i=1; i < tokens.length; i++)
 				{
-					drIn[i-1]=new Double(tokens[i]);
+					if (tokens[i].equalsIgnoreCase("true") || tokens[i].equalsIgnoreCase("false")) {
+						drIn[i-1] = new Boolean(tokens[i]);
+					} else if (tokens[i].equalsIgnoreCase("null")) {
+						drIn[i-1]=null;
+					} else {
+						drIn[i-1]=new Double(tokens[i]);
+					}
 				}
 				DriverInput input=new DriverInput(drIn);
 				input.setTimeOffset(timeOffset);
@@ -425,6 +430,7 @@ public class ActionRecorder
 	{
 		if (isRecording())
 		{
+			SmartDashboard.getString("DB/String 0", "new_auto.csv");
 			fileToRecord=autoFileList.get(autoFileIndex);
 		}
 	}

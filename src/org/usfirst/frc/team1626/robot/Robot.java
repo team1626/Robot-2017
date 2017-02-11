@@ -2,15 +2,15 @@ package org.usfirst.frc.team1626.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.TalonSRX;
+
+import java.lang.reflect.InvocationTargetException;
+
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Talon;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
-import java.lang.reflect.InvocationTargetException;
-
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.RobotDrive;
@@ -40,7 +40,8 @@ public class Robot extends IterativeRobot {
 
 	private XboxController xbox;
 	
-	private Talon pickUpTalon;
+	private Talon pickUpOneTalon;
+	private Talon pickUpTwoTalon;
 	private Talon shooterOneTalon;
 	private Talon shooterTwoTalon;
 	private Talon winchTalon;
@@ -64,9 +65,10 @@ public class Robot extends IterativeRobot {
 		drive              = new RobotDrive(frontLeft, backLeft, frontRight, backRight);
 		xbox               = new XboxController(1);
 		
-		pickUpTalon        = new Talon(4);
+		pickUpOneTalon     = new Talon(4);
+		pickUpTwoTalon     = new Talon(6);
 		shooterOneTalon    = new Talon(5);
-		shooterTwoTalon    = new Talon(6);
+		shooterTwoTalon    = new Talon(3);
 		winchTalon         = new Talon(7);
 		
 		pdp                = new PowerDistributionPanel(0);
@@ -78,7 +80,10 @@ public class Robot extends IterativeRobot {
 			setUpButton(xbox, 1).
 			setDownButton(xbox, 2).
 			setRecordButton(xbox, 3);
-		DriverInput.nameInput("X-Button");
+		DriverInput.nameInput("Operator-X-Button");
+		DriverInput.nameInput("Operator-Y-Button");
+		DriverInput.nameInput("Operator-A-Button");
+		DriverInput.nameInput("Operator-B-Button");
 	} 
 	
 	@Override
@@ -117,26 +122,30 @@ public class Robot extends IterativeRobot {
 		double rightAxisValue = xbox.getRawAxis(5);
 		drive.tankDrive(leftAxisValue, rightAxisValue);
 		
-//		try {
-//			actions.input(new DriverInput()
-//					.withInput("X-Button", xbox.getXButton()));
-//		} catch (IllegalAccessException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IllegalArgumentException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (InvocationTargetException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		try {
+		actions.input(new DriverInput()
+				.withInput("Operator-X-Button", xbox.getXButton())
+				.withInput("Operator-Y-Button", xbox.getYButton())
+				.withInput("Operator-A-Button", xbox.getAButton())
+				.withInput("Operator-B-Button", xbox.getBButton()));
+		
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		if (xbox.getBumper() == true) {
-			pickUpTalon.set(-.99);
+			pickUpOneTalon.set(-.99);
 		} else if (xbox.getBumper() == true) {
-			pickUpTalon.set(.99);
+			pickUpOneTalon.set(.99);
 		} else {
-			pickUpTalon.set(0);
+			pickUpOneTalon.set(0);
 		}
 		
 		// TODO - make sure solenoid values are correct (rn kFoward shifts to low gear)
@@ -167,10 +176,29 @@ public class Robot extends IterativeRobot {
 	}
 	
 	public void robotOperation(DriverInput input) {
-//		if (input.getButton("X-Button") == true) {
-//			shooterOneTalon.set(.99);
-//			shooterTwoTalon.set(.99);
-//		}
+		System.out.println("Operating with: <" + input.toString() + ">");
+		
+		if (input.getButton("Operator-X-Button") == true) {
+			shooterOneTalon.set(.99);
+			shooterTwoTalon.set(.99);
+		} else if (input.getButton("Operator-Y-Button") == true) {
+			shooterOneTalon.set(-.99);
+			shooterTwoTalon.set(-.99);
+		} else {
+			shooterOneTalon.set(0);
+			shooterTwoTalon.set(0);
+		}
+
+		if (input.getButton("Operator-A-Button") == true) {
+			pickUpOneTalon.set(.35);
+			pickUpTwoTalon.set(-.35);
+		} else if (input.getButton("Operator-B-Button") == true) {
+			pickUpOneTalon.set(-.35);
+			pickUpTwoTalon.set(.35);
+		} else {
+			pickUpOneTalon.set(0);
+			pickUpTwoTalon.set(0);
+		}
 	}
 	
 	@Override
