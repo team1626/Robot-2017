@@ -19,7 +19,10 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
- * Talon VII :: Robot
+ * Talon VII :: Robotics
+ *  - Tankdrive with CANTalons
+ *  - Shooter
+ *  
  * 
  * @author Rohan Mishra & Team 1626 Falcon Robotics
  * @version 1.0.0
@@ -44,7 +47,7 @@ public class Robot extends IterativeRobot {
 	
 	private PowerDistributionPanel pdp;
 	
-	private DoubleSolenoid gearShifter;
+	private DoubleSolenoid gearShifter; 
 	boolean highGear = true;
 	
 	int autoLoopCounter;
@@ -53,7 +56,6 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		// TODO - Convert to CANTalon code
-		// jake senkewicz left his mark on the robootics code
 		frontLeft          = new TalonSRX(0);
 		frontRight         = new TalonSRX(1);
 		backLeft           = new TalonSRX(2);
@@ -76,8 +78,7 @@ public class Robot extends IterativeRobot {
 			setUpButton(xbox, 1).
 			setDownButton(xbox, 2).
 			setRecordButton(xbox, 3);
-		DriverInput.nameInput("LeftTriggerAxis");
-		DriverInput.nameInput("RightTriggerAxis");
+		DriverInput.nameInput("X-Button");
 	} 
 	
 	@Override
@@ -116,22 +117,21 @@ public class Robot extends IterativeRobot {
 		double rightAxisValue = xbox.getRawAxis(5);
 		drive.tankDrive(leftAxisValue, rightAxisValue);
 		
-		try {
-		actions.input(new DriverInput(xbox.getRawAxis(2),
-									  xbox.getRawAxis(5)));
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			actions.input(new DriverInput()
+//					.withInput("X-Button", xbox.getXButton()));
+//		} catch (IllegalAccessException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IllegalArgumentException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (InvocationTargetException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
 		if (xbox.getBumper() == true) {
-			// testSolenoid.set(DoubleSolenoid.Value.kReverse);
 			pickUpTalon.set(-.99);
 		} else if (xbox.getBumper() == true) {
 			pickUpTalon.set(.99);
@@ -150,7 +150,7 @@ public class Robot extends IterativeRobot {
 		
 		SmartDashboard.putNumber("Voltage", pdp.getVoltage());
 		// RoboRIO Brownout triggers @ 6.8V
-		if (pdp.getVoltage() <= 7.0) {
+		while (pdp.getVoltage() <= 7.0) {
 			xbox.setRumble(RumbleType.kLeftRumble, 1.0);
 			xbox.setRumble(RumbleType.kRightRumble, 1.0);
 		}
@@ -167,7 +167,10 @@ public class Robot extends IterativeRobot {
 	}
 	
 	public void robotOperation(DriverInput input) {
-
+//		if (input.getButton("X-Button") == true) {
+//			shooterOneTalon.set(.99);
+//			shooterTwoTalon.set(.99);
+//		}
 	}
 	
 	@Override
