@@ -96,18 +96,14 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void autonomousPeriodic() {
-		try
-		{
-			if (actions != null)
-			{
+		try {
+			if (actions != null) {
 //				actions.playback();
 				actions.longPlayback(this, -1);
-			} else
-			{
+			} else {
 				Timer.delay(0.010);
 			}
-		} catch (Exception e)
-		{
+		} catch (Exception e) {
 			System.out.println("AP: " + e.toString());
 		}
 	}

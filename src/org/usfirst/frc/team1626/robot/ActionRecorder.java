@@ -18,66 +18,63 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Utility;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class ActionRecorder
-{
-	private boolean recording=false;
-	private boolean recordingReady=false;
+public class ActionRecorder {
+	private boolean recording         = false;
+	private boolean recordingReady    = false;
 	private long playbackStart;
-	private List<DriverInput> driverInputs;
-	private Iterator<DriverInput> playbackIterator;
+	
+	private List <DriverInput> driverInputs;
+	private Iterator <DriverInput> playbackIterator;
+	
 	private Object playbackObject;
 	private Method playbackMethod;
+	
 	private StateButton upButton;
 	private StateButton downButton;
 	private StateButton recordButton;
-	private List<File> autoFileList;
+	
+	private List <File> autoFileList;
 	private int autoFileIndex;
-	private File fileToRecord=null; 
+	private File fileToRecord         = null; 
 	
 	// For timing accuracy measurements
 	
-	private long Sx=0;
-	private long Sx2=0;
-	private long Sxy=0;
-	private long Sy=0;
-	private long Sy2=0;
-	private long n=0;
+	private long Sx     = 0;
+	private long Sx2    = 0;
+	private long Sxy    = 0;
+	private long Sy     = 0;
+	private long Sy2    = 0;
+	private long n      = 0;
 	
-	public class StateButton
-	{
+	public class StateButton {
 		private int buttonNumber;
 		private XboxController controller;
 		private boolean prevState;
 		
-		public StateButton(XboxController stick, int button)
-		{
+		public StateButton(XboxController stick, int button) {
 			controller = stick;
 			buttonNumber = button;
 			prevState = false;
 		}
 		
-		public boolean getState()
-		{
-			boolean rv=false;
-			boolean currState=controller.getRawButton(buttonNumber);
-			rv=currState && !prevState;
-			prevState=currState;
+		public boolean getState() {
+			boolean rv  = false;
+			boolean currState = controller.getRawButton(buttonNumber);
+			rv  = currState && !prevState;
+			prevState = currState;
 			return rv;			
 		}
 	}
 	
-	public ActionRecorder()
-	{
-		recording=false;
-		recordingReady=false;
+	public ActionRecorder() {
+		recording = false;
+		recordingReady = false;
 	}
 
 	@SuppressWarnings("rawtypes")
-	private Method lookUpMethod(Object obj, String methodName, Class... args)
-	{
-		Method method=null;
-		try
-		{
+	private Method lookUpMethod(Object obj, String methodName, Class... args) {
+		Method method = null;
+		try {
 			method = obj.getClass().getMethod(methodName,  args);
 		} catch (NoSuchMethodException e) {
 			// TODO Auto-generated catch block
@@ -90,126 +87,108 @@ public class ActionRecorder
 	}
 
 	@SuppressWarnings("rawtypes")
-	public ActionRecorder setMethod(Object obj, String methodName,  Class... args)
-	{
+	public ActionRecorder setMethod(Object obj, String methodName,  Class... args) {
 		Method method;
-		if ((method=lookUpMethod(obj, methodName, args)) != null)
-		{
-			playbackObject=obj;
-			playbackMethod=method;
+		if ((method = lookUpMethod(obj, methodName, args)) != null) {
+			playbackObject = obj;
+			playbackMethod = method;
 		}
 		return this;
 	}
 
-	public ActionRecorder setController(XboxController stick)
-	{
+	public ActionRecorder setController(XboxController stick) {
 		return this;
 	}
 
-	public ActionRecorder setUpButton(XboxController stick, int up)
-	{
-		upButton=new StateButton(stick, up);
+	public ActionRecorder setUpButton(XboxController stick, int up) {
+		upButton = new StateButton(stick, up);
 		return this;
 	}
 
-	public ActionRecorder setDownButton(XboxController stick, int down)
-	{
-		downButton=new StateButton(stick, down);
+	public ActionRecorder setDownButton(XboxController stick, int down) {
+		downButton = new StateButton(stick, down);
 		return this;
 	}
-	public ActionRecorder setRecordButton(XboxController stick, int rec)
-	{
-		recordButton=new StateButton(stick, rec);
+	
+	public ActionRecorder setRecordButton(XboxController stick, int rec) {
+		recordButton = new StateButton(stick, rec);
 		return this;
 	}
 
-	public void startRecording()
-	{
-		recording=true;
-		recordingReady=false;
+	public void startRecording() {
+		recording = true;
+		recordingReady = false;
 		SmartDashboard.putBoolean("Auto/Recording", true);
 		SmartDashboard.putBoolean("DB/LED 0", true);
 	}
 	
-	public boolean isRecording()
-	{
+	public boolean isRecording() {
 		return recording;
 	}
 
-	public void stopRecording()
-	{
-		recording=false;
+	public void stopRecording() {
+		recording = false;
 		SmartDashboard.putBoolean("Auto/Recording", false);
 		SmartDashboard.putBoolean("DB/LED 0", false);
 	}
 
-	public void toggleRecording()
-	{
-		if (isRecording())
-		{
+	public void toggleRecording() {
+		if (isRecording()) {
 			stopRecording();
-		} else
-		{
+		} else {
 			startRecording();
 		}
 	}
 	
-	public void displayName()
-	{
+	public void displayName() {
 		SmartDashboard.putString("Auto/FileName", autoFileList.get(autoFileIndex).getName());
 		SmartDashboard.putString("DB/String 0", autoFileList.get(autoFileIndex).getName());
 	}
 	
-	private int getAutoFileList()
-	{
-		autoFileList=new ArrayList<File>();
+	private int getAutoFileList() {
+		autoFileList = new ArrayList<File>();
 		File autoDir = new File("/home/lvuser/auto");
 		System.out.println("Auto Root is: " + autoDir.getAbsolutePath());
 		File[] autoLs = autoDir.listFiles();
 		System.out.println("Containing " + autoLs.length + " files");
 
-		int newIdx=-1;
+		int newIdx = -1;
 
-		if (autoLs != null)
-		{
-			for (File f : autoLs)
-			{
-				if (f.isFile())
-				{
+		if (autoLs != null) {
+			for (File f : autoLs) {
+				if (f.isFile()) {
 					System.out.println("File<" + f.getAbsolutePath() + ">");
 					String fName=f.getName();
-					if (fName.matches("new[0-9]+\\.csv"))
-					{
+					
+					if (fName.matches("new[0-9]+\\.csv")) {
 						int dotPos = fName.indexOf('.', 3);
 						System.out.println("dot pos is " + dotPos);
-						if (dotPos > 3)
-						{
+						
+						if (dotPos > 3) {
 							String idx = fName.substring(3, dotPos);
 							int fNum=Integer.parseInt(idx);
 							System.out.println("num<" + idx + ">=" + fNum);
 
-							if (fNum >= newIdx)
-							{
+							if (fNum >= newIdx) {
 								newIdx=fNum+1;
 								System.out.println("new index is " + newIdx);
 							}
 						}
 					}
 				}
+				
 				autoFileList.add(f);
 			}
 		}
+		
 		return newIdx;
 	}
 	
-	private void writeDriverInputs()
-	{
-		try
-		{
+	private void writeDriverInputs() {
+		try {
 			BufferedWriter outFile= new BufferedWriter(new FileWriter(fileToRecord));
 			
-			for (DriverInput input: driverInputs)
-			{
+			for (DriverInput input: driverInputs) {
 				outFile.write(input.toString());
 				outFile.write("\n");
 			}
@@ -227,16 +206,14 @@ public class ActionRecorder
 	 * s.d. = sqrt((Sx2/n)-(Sx/n)**2)
 	 */
 
-	
-	public void disabledInit()
-	{
+	public void disabledInit() {
 		System.out.println("Entering disabledInit");
 		
 		System.out.println("n=" + n +
 				" Sx=" + Sx + " Sx2=" + Sx2 + " Sxy=" + Sxy + " Sy=" + Sy + " Sy2=" + Sy2);
 				
-		double m=((double)(n*Sxy - Sx*Sy))/(((double)(n*Sx2))-Math.pow((double)Sx,2));
-		double b=((double)(Sy-m*Sx))/((double)n);
+		double m = ((double)(n*Sxy - Sx*Sy))/(((double)(n*Sx2))-Math.pow((double)Sx,2));
+		double b = ((double)(Sy-m*Sx))/((double)n);
 		double mean = ((double)Sy)/((double)n);
 		double sd = Math.sqrt(((double)Sy2/(double)n)-Math.pow(mean,2));
 
@@ -245,10 +222,8 @@ public class ActionRecorder
 		SmartDashboard.putNumber("Auto/Timing/Standard Deviation",  sd);
 		SmartDashboard.putNumber("Auto/Timing/Mean",  mean);
 		
-		if (isRecording())
-		{
-			if ((driverInputs != null) && (driverInputs.size() > 0))
-			{
+		if (isRecording()) {
+			if ((driverInputs != null) && (driverInputs.size() > 0)) {
 				writeDriverInputs();
 			}
 		}
@@ -262,26 +237,20 @@ public class ActionRecorder
 		displayName();
 	}
 
-	public void disabledPeriodic()
-	{
-		if ((recordButton != null) && recordButton.getState())
-		{
+	public void disabledPeriodic() {
+		if ((recordButton != null) && recordButton.getState()) {
 			toggleRecording();
 		}
 		
-		if ((upButton != null) && upButton.getState())
-		{
-			if (autoFileIndex < (autoFileList.size()-1))
-			{
+		if ((upButton != null) && upButton.getState()) {
+			if (autoFileIndex < (autoFileList.size()-1)) {
 				autoFileIndex++;
 				displayName();
 			}
 		}
 		
-		if ((downButton != null) && downButton.getState())
-		{
-			if (autoFileIndex > 0)
-			{
+		if ((downButton != null) && downButton.getState()) {
+			if (autoFileIndex > 0) {
 				autoFileIndex--;
 				displayName();
 			}
@@ -290,48 +259,41 @@ public class ActionRecorder
 		playbackIterator=null;
 	}
 
-	public void input(DriverInput drIn) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException
-	{
-		if (isRecording())
-		{
-			if (!recordingReady)
-			{
+	public void input(DriverInput drIn) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		if (isRecording()) {
+			if (!recordingReady) {
 				driverInputs = new ArrayList<DriverInput>();
-				recordingReady=true;
+				recordingReady = true;
 			}
+			
 			driverInputs.add(drIn);
 		}
+		
 		playbackMethod.invoke(playbackObject,  drIn);
 	}
 	
-	public void longPlayback(RobotBase robot, int nCycles)
-	{
-		while (((nCycles < 0) || nCycles > 0) && (robot.isAutonomous() && robot.isEnabled()))
-		{
+	public void longPlayback(RobotBase robot, int nCycles) {
+		while (((nCycles < 0) || nCycles > 0) && (robot.isAutonomous() && robot.isEnabled())) {
 			playback();
 			nCycles--;
 		}
 
 	}
 	
-	public void playback()
-	{
-		if ((driverInputs==null) || (driverInputs.size() == 0))
-		{
+	public void playback() {
+		if ((driverInputs == null) || (driverInputs.size() == 0)) {
 			System.out.println("No driver inputs to playback");
 			Timer.delay(0.050);
 			return;
 		}
 		
-		if (playbackIterator == null)
-		{
+		if (playbackIterator == null) {
 			System.out.println("Creating Iterator for " + driverInputs.size() + " inputs");
 			playbackIterator=driverInputs.iterator();
 			playbackStart=Utility.getFPGATime();
 		}
 
-		if (playbackIterator.hasNext())
-		{
+		if (playbackIterator.hasNext()) {
 			DriverInput input=playbackIterator.next();
 			
 //			System.out.println("input time offset is " + input.getTimeOffset());
@@ -339,8 +301,7 @@ public class ActionRecorder
 			double delayForPlayback=((double)(playbackStart+input.getTimeOffset() - Utility.getFPGATime()))/1000000.0;
 //			System.out.println("Delay before input is " + delayForPlayback);
 
-			if (delayForPlayback > 0)
-			{
+			if (delayForPlayback > 0) {
 				Timer.delay(delayForPlayback);
 			}
 			
@@ -354,7 +315,6 @@ public class ActionRecorder
 			Sy += timeError;
 			
 			n++;
-			
 
 			try {
 				playbackMethod.invoke(playbackObject,  input);
@@ -368,38 +328,36 @@ public class ActionRecorder
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} else
-		{
+		} else {
 			Timer.delay(0.010);
 		}
 	}
 	
-	private void readAutoFile(File autoFile)
-	{
+	private void readAutoFile(File autoFile) {
 		BufferedReader inFile = null;
-		try
-		{
+		try {
 			inFile = new BufferedReader(new FileReader(autoFile));
-			driverInputs=new ArrayList<DriverInput>();
+			driverInputs = new ArrayList<DriverInput>();
 			
 			String line;
-			while ((line=inFile.readLine()) != null)
-			{
+			
+			while ((line = inFile.readLine()) != null) {
 //				System.out.println("Line was <" + line + ">");
 				String[] tokens = line.split(";");
 				int timeOffset = Integer.parseInt(tokens[0]);
 				Object[] drIn = new Object[tokens.length-1];
-				for (int i=1; i < tokens.length; i++)
-				{
+				
+				for (int i=1; i < tokens.length; i++) {
 					if (tokens[i].equalsIgnoreCase("true") || tokens[i].equalsIgnoreCase("false")) {
 						drIn[i-1] = new Boolean(tokens[i]);
 					} else if (tokens[i].equalsIgnoreCase("null")) {
-						drIn[i-1]=null;
+						drIn[i-1] = null;
 					} else {
-						drIn[i-1]=new Double(tokens[i]);
+						drIn[i-1] = new Double(tokens[i]);
 					}
 				}
-				DriverInput input=new DriverInput(drIn);
+				
+				DriverInput input = new DriverInput(drIn);
 				input.setTimeOffset(timeOffset);
 				driverInputs.add(input);
 			}
@@ -412,10 +370,8 @@ public class ActionRecorder
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} finally
-		{
-			if (inFile != null)
-			{
+		} finally {
+			if (inFile != null) {
 				try {
 					inFile.close();
 				} catch (IOException e) {
@@ -426,36 +382,30 @@ public class ActionRecorder
 		}
 	}
 	
-	public void teleopInit()
-	{
-		if (isRecording())
-		{
+	public void teleopInit() {
+		if (isRecording()) {
 			SmartDashboard.getString("DB/String 0", "new_auto.csv");
-			fileToRecord=autoFileList.get(autoFileIndex);
+			fileToRecord = autoFileList.get(autoFileIndex);
 		}
 	}
 
-	public void autonomousInit()
-	{
+	public void autonomousInit() {
 //		System.out.println("Entering autonomous init with " + autoFileList.get(autoFileIndex).getAbsoluteFile());
 		File autoFile = autoFileList.get(autoFileIndex);
-		if (autoFile.canRead())
-		{
+		if (autoFile.canRead()) {
 //			System.out.println("Reading <" + autoFile.getName() + ">");
 			readAutoFile(autoFile);
 		}
-		if (driverInputs==null)
-		{
+		if (driverInputs == null) {
 			System.out.println("No Auto File");
-		} else
-		{
+		} else {
 			System.out.println("Auto File has " + driverInputs.size() + " elements");
-			Sx=0;
-			Sx2=0;
-			Sxy=0;
-			Sy=0;
-			Sy2=0;
-			n=0;
+			Sx = 0;
+			Sx2 = 0;
+			Sxy = 0;
+			Sy = 0;
+			Sy2 = 0;
+			n = 0;
 
 		}
 	}
