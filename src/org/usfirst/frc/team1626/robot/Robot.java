@@ -84,6 +84,8 @@ public class Robot extends IterativeRobot {
 		DriverInput.nameInput("Operator-Y-Button");
 		DriverInput.nameInput("Operator-A-Button");
 		DriverInput.nameInput("Operator-B-Button");
+		DriverInput.nameInput("Left-Stick");
+		DriverInput.nameInput("Right-Stick");
 	} 
 	
 	@Override
@@ -119,7 +121,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {		
 		try {
-		actions.input(new DriverInput()
+			actions.input(new DriverInput()
 				.withInput("Operator-X-Button", xbox.getXButton())
 				.withInput("Operator-Y-Button", xbox.getYButton())
 				.withInput("Operator-A-Button", xbox.getAButton())
