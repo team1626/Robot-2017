@@ -117,18 +117,13 @@ public class Robot extends IterativeRobot {
 	}
 
 	@Override
-	public void teleopPeriodic() {
-		double leftAxisValue = xbox.getRawAxis(2);
-		double rightAxisValue = xbox.getRawAxis(5);
-		drive.tankDrive(leftAxisValue, rightAxisValue);
-		
+	public void teleopPeriodic() {		
 		try {
 		actions.input(new DriverInput()
 				.withInput("Operator-X-Button", xbox.getXButton())
 				.withInput("Operator-Y-Button", xbox.getYButton())
 				.withInput("Operator-A-Button", xbox.getAButton())
 				.withInput("Operator-B-Button", xbox.getBButton()));
-		
 		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -139,6 +134,10 @@ public class Robot extends IterativeRobot {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		double leftAxisValue = xbox.getRawAxis(2);
+		double rightAxisValue = xbox.getRawAxis(5);
+		drive.tankDrive(leftAxisValue, rightAxisValue);
 		
 		if (xbox.getBumper() == true) {
 			pickUpOneTalon.set(-.99);
@@ -159,9 +158,15 @@ public class Robot extends IterativeRobot {
 		
 		SmartDashboard.putNumber("Voltage", pdp.getVoltage());
 		// RoboRIO Brownout triggers @ 6.8V
-		while (pdp.getVoltage() <= 7.0) {
+		while (pdp.getVoltage() <= 7.2) {
 			xbox.setRumble(RumbleType.kLeftRumble, 1.0);
 			xbox.setRumble(RumbleType.kRightRumble, 1.0);
+			
+			if (pdp.getVoltage() > 7.2) {
+				// Reset certain components
+				
+				break;
+			}
 		}
 	}
 	
