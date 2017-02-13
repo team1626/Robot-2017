@@ -19,14 +19,15 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
+ * 
  * Talon VII :: Robotics
  *  - Tankdrive
  *  - Xbox Controller
  *  - Shooter
- *  - Winch
- *  - Pick up
+ *  - Using the winch to climb
+ *  - Ball pick up
  *  - Autonomous Echo code
- *  - Brownout
+ *  - Brownout protection
  *  
  * @author Rohan Mishra & Team 1626 Falcon Robotics
  * @version 1.0.0
