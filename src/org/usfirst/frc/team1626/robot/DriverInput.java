@@ -18,7 +18,7 @@ public class DriverInput {
 	}
 
 	public String toString() {
-		StringBuffer str=new StringBuffer();
+		StringBuffer str = new StringBuffer();
 		str.append(timeOffset);
 		
 		for (String name: inputNames) {
