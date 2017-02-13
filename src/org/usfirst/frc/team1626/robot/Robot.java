@@ -20,10 +20,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Talon VII :: Robotics
- *  - Tankdrive with CANTalons
+ *  - Tankdrive
+ *  - Xbox Controller
  *  - Shooter
+ *  - Winch
+ *  - Pick up
+ *  - Autonomous Echo code
+ *  - Brownout
  *  
- * 
  * @author Rohan Mishra & Team 1626 Falcon Robotics
  * @version 1.0.0
  * 
@@ -40,10 +44,10 @@ public class Robot extends IterativeRobot {
 
 	private XboxController xbox;
 	
-	private Talon pickUpOneTalon;
-	private Talon pickUpTwoTalon;
-	private Talon shooterOneTalon;
-	private Talon shooterTwoTalon;
+	private Talon pickUpTalonOne;
+	private Talon pickUpTalonTwo;
+	private Talon shooterTalonOne;
+	private Talon shooterTalonTwo;
 	private Talon winchTalon;
 	
 	private PowerDistributionPanel pdp;
@@ -63,12 +67,12 @@ public class Robot extends IterativeRobot {
 		backRight          = new TalonSRX(3);
 		
 		drive              = new RobotDrive(frontLeft, backLeft, frontRight, backRight);
-		xbox               = new XboxController(1);
+		xbox               = new XboxController(1); 
 		
-		pickUpOneTalon     = new Talon(4);
-		pickUpTwoTalon     = new Talon(6);
-		shooterOneTalon    = new Talon(5);
-		shooterTwoTalon    = new Talon(3);
+		pickUpTalonOne     = new Talon(4);
+		pickUpTalonTwo     = new Talon(6);
+		shooterTalonOne    = new Talon(5);
+		shooterTalonTwo    = new Talon(3);
 		winchTalon         = new Talon(7);
 		
 		pdp                = new PowerDistributionPanel(0);
@@ -138,11 +142,11 @@ public class Robot extends IterativeRobot {
 		drive.tankDrive(leftAxisValue, rightAxisValue);
 		
 		if (xbox.getBumper() == true) {
-			pickUpOneTalon.set(-.99);
+			winchTalon.set(-.99);
 		} else if (xbox.getBumper() == true) {
-			pickUpOneTalon.set(.99);
+			winchTalon.set(.99);
 		} else {
-			pickUpOneTalon.set(0);
+			winchTalon.set(0);
 		}
 		
 		// TODO - make sure solenoid values are correct (rn kFoward shifts to low gear)
@@ -182,25 +186,25 @@ public class Robot extends IterativeRobot {
 		System.out.println("Operating with: <" + input.toString() + ">");
 		
 		if (input.getButton("Operator-X-Button") == true) {
-			shooterOneTalon.set(.99);
-			shooterTwoTalon.set(.99);
+			shooterTalonOne.set(.99);
+			shooterTalonTwo.set(.99);
 		} else if (input.getButton("Operator-Y-Button") == true) {
-			shooterOneTalon.set(-.99);
-			shooterTwoTalon.set(-.99);
+			shooterTalonOne.set(-.99);
+			shooterTalonTwo.set(-.99);
 		} else {
-			shooterOneTalon.set(0);
-			shooterTwoTalon.set(0);
+			shooterTalonOne.set(0);
+			shooterTalonTwo.set(0);
 		}
 
 		if (input.getButton("Operator-A-Button") == true) {
-			pickUpOneTalon.set(.35);
-			pickUpTwoTalon.set(-.35);
+			pickUpTalonOne.set(.35);
+			pickUpTalonTwo.set(-.35);
 		} else if (input.getButton("Operator-B-Button") == true) {
-			pickUpOneTalon.set(-.35);
-			pickUpTwoTalon.set(.35);
+			pickUpTalonOne.set(-.35);
+			pickUpTalonTwo.set(.35);
 		} else {
-			pickUpOneTalon.set(0);
-			pickUpTwoTalon.set(0);
+			pickUpTalonOne.set(0);
+			pickUpTalonTwo.set(0);
 		}
 	}
 	
