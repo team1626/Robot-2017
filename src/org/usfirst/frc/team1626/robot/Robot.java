@@ -92,6 +92,7 @@ public class Robot extends IterativeRobot {
 			setUpButton(xbox, 1).
 			setDownButton(xbox, 2).
 			setRecordButton(xbox, 3);
+		// TODO - Add Gear-Shifter input
 		DriverInput.nameInput("Driver-Left");
 		DriverInput.nameInput("Driver-Right");
 		DriverInput.nameInput("Driver-Trigger");
