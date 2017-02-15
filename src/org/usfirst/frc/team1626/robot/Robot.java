@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.RobotDrive;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -160,15 +161,17 @@ public class Robot extends IterativeRobot {
 		}
 		
 		SmartDashboard.putNumber("Voltage", pdp.getVoltage());
-		// RoboRIO Brownout triggers @ 6.8V
-		while (pdp.getVoltage() <= 7.2) {
-			xbox.setRumble(RumbleType.kLeftRumble, 1.0);
-			xbox.setRumble(RumbleType.kRightRumble, 1.0);
-			
-			if (pdp.getVoltage() > 7.2) {
-				// Reset certain components
+		// RoboRIO Brownout triggers @ 6.8V		
+		if (Timer.getMatchTime() >= 20.0) {
+			while (pdp.getVoltage() <= 7.2) {
+				xbox.setRumble(RumbleType.kLeftRumble, 1.0);
+				xbox.setRumble(RumbleType.kRightRumble, 1.0);
 				
-				break;
+				if (pdp.getVoltage() > 7.2) {
+					// Reset certain components
+					
+					break;
+				}
 			}
 		}
 	}
