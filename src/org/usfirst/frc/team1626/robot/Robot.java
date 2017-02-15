@@ -8,14 +8,15 @@ import java.lang.reflect.InvocationTargetException;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Talon;
+import com.ctre.CANTalon;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.RobotDrive;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -37,14 +38,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends IterativeRobot {
 	
-	private TalonSRX frontLeft;
-	private TalonSRX frontRight;
-	private TalonSRX backLeft;
-	private TalonSRX backRight;
+	private CANTalon frontLeft;
+	private CANTalon frontRight;
+	private CANTalon backLeft;
+	private CANTalon backRight;
 	
 	private RobotDrive drive;
 
 	private XboxController xbox;
+	private Joystick driveLeft;
+	private Joystick driveRight;
 	
 	private Talon pickUpTalonOne;
 	private Talon pickUpTalonTwo;
@@ -55,7 +58,7 @@ public class Robot extends IterativeRobot {
 	private PowerDistributionPanel pdp;
 	
 	private DoubleSolenoid gearShifter; 
-	boolean highGear = true;
+	private boolean highGear = true;
 	
 	int autoLoopCounter;
 	ActionRecorder actions;
@@ -63,13 +66,16 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		// TODO - Convert to CANTalon code
-		frontLeft          = new TalonSRX(0);
-		frontRight         = new TalonSRX(1);
-		backLeft           = new TalonSRX(2);
-		backRight          = new TalonSRX(3);
+		frontLeft          = new CANTalon(3);
+		frontRight         = new CANTalon(10);
+		backLeft           = new CANTalon(11);
+		backRight          = new CANTalon(1);
 		
 		drive              = new RobotDrive(frontLeft, backLeft, frontRight, backRight);
-		xbox               = new XboxController(1); 
+		driveLeft          = new Joystick(0);
+		driveRight		   = new Joystick(1);
+		
+		xbox               = new XboxController(2);
 		
 		pickUpTalonOne     = new Talon(4);
 		pickUpTalonTwo     = new Talon(6);
@@ -86,12 +92,13 @@ public class Robot extends IterativeRobot {
 			setUpButton(xbox, 1).
 			setDownButton(xbox, 2).
 			setRecordButton(xbox, 3);
+		DriverInput.nameInput("Driver-Left");
+		DriverInput.nameInput("Driver-Right");
+		DriverInput.nameInput("Driver-Trigger");
 		DriverInput.nameInput("Operator-X-Button");
 		DriverInput.nameInput("Operator-Y-Button");
 		DriverInput.nameInput("Operator-A-Button");
 		DriverInput.nameInput("Operator-B-Button");
-		DriverInput.nameInput("Left-Stick");
-		DriverInput.nameInput("Right-Stick");
 	} 
 	
 	@Override
