@@ -151,7 +151,7 @@ public class Robot extends IterativeRobot {
 		double rightAxisValue = xbox.getRawAxis(5);
 		drive.tankDrive(leftAxisValue, rightAxisValue);
 		
-		if (xbox.getBumper() == true) {
+		if (xbox.getBumper()) {
 			winchTalon.set(-.99);
 		} else if (xbox.getBumper() == true) {
 			winchTalon.set(.99);
