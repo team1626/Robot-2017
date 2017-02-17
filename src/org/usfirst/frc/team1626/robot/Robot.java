@@ -37,7 +37,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 
 public class Robot extends IterativeRobot {
-	
 	private CANTalon frontLeft;
 	private CANTalon frontRight;
 	private CANTalon backLeft;
@@ -95,7 +94,8 @@ public class Robot extends IterativeRobot {
 		// TODO - Add Gear-Shifter input
 		DriverInput.nameInput("Driver-Left");
 		DriverInput.nameInput("Driver-Right");
-		DriverInput.nameInput("Driver-Trigger");
+		DriverInput.nameInput("Driver-Left-Trigger");
+		DriverInput.nameInput("Driver-Right-Trigger");
 		DriverInput.nameInput("Operator-X-Button");
 		DriverInput.nameInput("Operator-Y-Button");
 		DriverInput.nameInput("Operator-A-Button");
@@ -130,25 +130,8 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopPeriodic() {		
-		try {
-			actions.input(new DriverInput()
-				.withInput("Operator-X-Button", xbox.getXButton())
-				.withInput("Operator-Y-Button", xbox.getYButton())
-				.withInput("Operator-A-Button", xbox.getAButton())
-				.withInput("Operator-B-Button", xbox.getBButton()));
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		double leftAxisValue = xbox.getRawAxis(2);
-		double rightAxisValue = xbox.getRawAxis(5);
+		double leftAxisValue = driveLeft.getRawAxis(2);
+		double rightAxisValue = driveRight.getRawAxis(5);
 		drive.tankDrive(leftAxisValue, rightAxisValue);
 		
 		if (xbox.getBumper()) {
@@ -159,11 +142,14 @@ public class Robot extends IterativeRobot {
 			winchTalon.set(0);
 		}
 		
+		// When robot turns on it is in low gear, this sets it into high gear
+		gearShifter.set(DoubleSolenoid.Value.kReverse);
+		
 		// TODO - make sure solenoid values are correct (rn kFoward shifts to low gear)
-		if (xbox.getStickButton() == true && highGear == true) {
+		if ((driveLeft.getRawButton(1) == true || driveRight.getRawButton(1) == true) && highGear == true) {
 			gearShifter.set(DoubleSolenoid.Value.kForward);
 			highGear = false;
-		} else if (xbox.getStickButton() == true && highGear == false) {
+		} else if ((driveLeft.getRawButton(1) == true || driveRight.getRawButton(1) == true) && highGear == false) {
 			gearShifter.set(DoubleSolenoid.Value.kReverse);
 			highGear = true;
 		}
@@ -181,6 +167,27 @@ public class Robot extends IterativeRobot {
 					break;
 				}
 			}
+		}
+		
+		try {
+			actions.input(new DriverInput()
+				.withInput("Driver-Left", driveLeft.getRawAxis(1))
+				.withInput("Driver-Right", driveRight.getRawAxis(1))
+				.withInput("Driver-Left-Trigger", driveLeft.getRawButton(1))
+				.withInput("Driver-Right-Trigger", driveRight.getRawButton(1))
+				.withInput("Operator-X-Button", xbox.getXButton())
+				.withInput("Operator-Y-Button", xbox.getYButton())
+				.withInput("Operator-A-Button", xbox.getAButton())
+				.withInput("Operator-B-Button", xbox.getBButton()));
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
