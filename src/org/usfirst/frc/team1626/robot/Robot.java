@@ -130,8 +130,8 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopPeriodic() {		
-		double leftAxisValue = driveLeft.getRawAxis(2);
-		double rightAxisValue = driveRight.getRawAxis(5);
+		double leftAxisValue = driveLeft.getRawAxis(1);
+		double rightAxisValue = driveRight.getRawAxis(1);
 		drive.tankDrive(leftAxisValue, rightAxisValue);
 		
 		if (xbox.getBumper()) {
