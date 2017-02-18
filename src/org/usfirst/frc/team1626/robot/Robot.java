@@ -132,7 +132,7 @@ public class Robot extends IterativeRobot {
 	}
 
 	@Override
-	public void teleopPeriodic() {		
+	public void teleopPeriodic() {
 		double leftAxisValue = driveLeft.getRawAxis(1);
 		double rightAxisValue = driveRight.getRawAxis(1);
 		drive.tankDrive(leftAxisValue, rightAxisValue);
@@ -167,6 +167,11 @@ public class Robot extends IterativeRobot {
 			gearShifter.set(DoubleSolenoid.Value.kReverse);
 			highGear = true;
 		}
+		
+		// given vout, pressure = 250(vout/vcc) - 25
+		// vss is assumed to be 5.0
+		double pressure = (250.0 * (pdp.getVoltage() / 5.0)) - 25;
+		SmartDashboard.putNumber("Pressure", pressure);
 		
 		SmartDashboard.putNumber("Voltage", pdp.getVoltage());
 		// RoboRIO Brownout triggers @ 6.8V		
