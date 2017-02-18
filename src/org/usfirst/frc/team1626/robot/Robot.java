@@ -111,6 +111,16 @@ public class Robot extends IterativeRobot {
 	} 
 	
 	@Override
+	public void robotPeriodic() {
+		// given vout, pressure = 250(vout/vcc) - 25
+		// vcc is assumed to be 5.0
+		double pressure = (250.0 * (pressureSensor.getVoltage() / 5.0)) - 25;
+		SmartDashboard.putString("DB/String 4", String.format("%.1f", pressure));
+				
+		SmartDashboard.putNumber("PDP Voltage", pdp.getVoltage());
+	}
+	
+	@Override
 	public void autonomousInit() {
 		autoLoopCounter = 0;
 		actions.autonomousInit();
@@ -173,12 +183,6 @@ public class Robot extends IterativeRobot {
 			highGear = true;
 		}
 		
-		// given vout, pressure = 250(vout/vcc) - 25
-		// vcc is assumed to be 5.0
-		double pressure = (250.0 * (pressureSensor.getVoltage() / 5.0)) - 25;
-		SmartDashboard.putString("DB/String 4", String.format("%.1f", pressure));
-		
-		SmartDashboard.putNumber("PDP Voltage", pdp.getVoltage());
 		// RoboRIO Brownout triggers @ 6.8V		
 		if (Timer.getMatchTime() >= 20.0) {
 			while (pdp.getVoltage() <= 7.2) {
