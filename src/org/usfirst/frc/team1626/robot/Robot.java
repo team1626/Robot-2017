@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Talon;
 import com.ctre.CANTalon;
 
+import edu.wpi.first.wpilibj.AnalogInput;
+
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
@@ -35,6 +37,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 
 public class Robot extends IterativeRobot {
+	private PowerDistributionPanel pdp;
+	
 	private CANTalon frontLeft;
 	private CANTalon frontRight;
 	private CANTalon backLeft;
@@ -52,17 +56,18 @@ public class Robot extends IterativeRobot {
 	private Talon shooterTalonTwo;
 	private Talon winchTalon;
 	
-	private PowerDistributionPanel pdp;
-	
 	private DoubleSolenoid gearShifter;
 	private boolean highGear = true;
+	
+	private AnalogInput pressureSensor;
 	
 	int autoLoopCounter;
 	ActionRecorder actions;
 		
 	@Override
 	public void robotInit() {
-		// TODO - Convert to CANTalon code
+		pdp                = new PowerDistributionPanel(0);
+		
 		frontLeft          = new CANTalon(3);
 		frontRight         = new CANTalon(10);
 		backLeft           = new CANTalon(11);
@@ -80,9 +85,9 @@ public class Robot extends IterativeRobot {
 		shooterTalonTwo    = new Talon(3);
 		winchTalon         = new Talon(7);
 		
-		pdp                = new PowerDistributionPanel(0);
-		
 		gearShifter        = new DoubleSolenoid(0, 1);
+		
+		pressureSensor     = new AnalogInput(0);
 		
 		actions 		   = new ActionRecorder();
 		
@@ -170,7 +175,7 @@ public class Robot extends IterativeRobot {
 		
 		// given vout, pressure = 250(vout/vcc) - 25
 		// vss is assumed to be 5.0
-		double pressure = (250.0 * (pdp.getVoltage() / 5.0)) - 25;
+		double pressure = (250.0 * (pressureSensor.getVoltage() / 5.0)) - 25;
 		SmartDashboard.putNumber("Pressure", pressure);
 		
 		SmartDashboard.putNumber("Voltage", pdp.getVoltage());
