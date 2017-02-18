@@ -174,11 +174,11 @@ public class Robot extends IterativeRobot {
 		}
 		
 		// given vout, pressure = 250(vout/vcc) - 25
-		// vss is assumed to be 5.0
+		// vcc is assumed to be 5.0
 		double pressure = (250.0 * (pressureSensor.getVoltage() / 5.0)) - 25;
 		SmartDashboard.putNumber("Pressure", pressure);
 		
-		SmartDashboard.putNumber("Voltage", pdp.getVoltage());
+		SmartDashboard.putNumber("PDP Voltage", pdp.getVoltage());
 		// RoboRIO Brownout triggers @ 6.8V		
 		if (Timer.getMatchTime() >= 20.0) {
 			while (pdp.getVoltage() <= 7.2) {
