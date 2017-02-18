@@ -5,7 +5,6 @@ import java.lang.reflect.InvocationTargetException;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Talon;
 import com.ctre.CANTalon;
@@ -55,7 +54,6 @@ public class Robot extends IterativeRobot {
 	
 	private PowerDistributionPanel pdp;
 	
-	private Compressor compressor;
 	private DoubleSolenoid gearShifter;
 	private boolean highGear = true;
 	
