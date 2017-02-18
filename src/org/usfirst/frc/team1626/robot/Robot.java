@@ -1,18 +1,17 @@
 package org.usfirst.frc.team1626.robot;
 
-import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.TalonSRX;
-
 import java.lang.reflect.InvocationTargetException;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Talon;
 import com.ctre.CANTalon;
 
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
-
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.RobotDrive;
@@ -22,7 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * 
- * Talon VII :: Robotics
+ * Talon VII :: Falcon Robotics Team 1626
  *  - Tankdrive
  *  - Xbox Controller
  *  - Shooter
@@ -56,7 +55,8 @@ public class Robot extends IterativeRobot {
 	
 	private PowerDistributionPanel pdp;
 	
-	private DoubleSolenoid gearShifter; 
+	private Compressor compressor;
+	private DoubleSolenoid gearShifter;
 	private boolean highGear = true;
 	
 	int autoLoopCounter;
@@ -87,6 +87,10 @@ public class Robot extends IterativeRobot {
 		gearShifter        = new DoubleSolenoid(0, 1);
 		
 		actions 		   = new ActionRecorder();
+		
+		// When robot turns on it is in low gear, this sets it into high gear
+		gearShifter.set(DoubleSolenoid.Value.kReverse);
+		
 		actions.setMethod(this, "robotOperation", DriverInput.class).
 			setUpButton(xbox, 1).
 			setDownButton(xbox, 2).
@@ -96,6 +100,7 @@ public class Robot extends IterativeRobot {
 		DriverInput.nameInput("Driver-Right");
 		DriverInput.nameInput("Driver-Left-Trigger");
 		DriverInput.nameInput("Driver-Right-Trigger");
+		DriverInput.nameInput("Operator-Right-Trigger");
 		DriverInput.nameInput("Operator-X-Button");
 		DriverInput.nameInput("Operator-Y-Button");
 		DriverInput.nameInput("Operator-A-Button");
@@ -134,18 +139,29 @@ public class Robot extends IterativeRobot {
 		double rightAxisValue = driveRight.getRawAxis(1);
 		drive.tankDrive(leftAxisValue, rightAxisValue);
 		
-		if (xbox.getBumper()) {
-			winchTalon.set(-.99);
-		} else if (xbox.getBumper() == true) {
-			winchTalon.set(.99);
+		if (xbox.getTrigger(Hand.kRight)) {
+			shooterTalonOne.set(99);
+			shooterTalonTwo.set(99);
+		} else {
+			shooterTalonOne.set(0);
+			shooterTalonTwo.set(0);
+		}
+		
+		if (xbox.getAButton()) {
+			pickUpTalonOne.set(99);
+			pickUpTalonTwo.set(99);
+		} else {
+			pickUpTalonOne.set(0);
+			pickUpTalonTwo.set(0);
+		}
+		
+		if (xbox.getBButton()) {
+			winchTalon.set(99);
 		} else {
 			winchTalon.set(0);
 		}
 		
-		// When robot turns on it is in low gear, this sets it into high gear
-		gearShifter.set(DoubleSolenoid.Value.kReverse);
-		
-		// TODO - make sure solenoid values are correct (rn kFoward shifts to low gear)
+		// TODO - make sure solenoid values are correct (rn kFoward shifts to low gear)		
 		if ((driveLeft.getRawButton(1) == true || driveRight.getRawButton(1) == true) && highGear == true) {
 			gearShifter.set(DoubleSolenoid.Value.kForward);
 			highGear = false;
@@ -162,7 +178,7 @@ public class Robot extends IterativeRobot {
 				xbox.setRumble(RumbleType.kRightRumble, 1.0);
 				
 				if (pdp.getVoltage() > 7.2) {
-					// Reset certain components
+					// TODO - Reset certain components
 					
 					break;
 				}
@@ -175,6 +191,7 @@ public class Robot extends IterativeRobot {
 				.withInput("Driver-Right", driveRight.getRawAxis(1))
 				.withInput("Driver-Left-Trigger", driveLeft.getRawButton(1))
 				.withInput("Driver-Right-Trigger", driveRight.getRawButton(1))
+				.withInput("Operator-Right-Trigger", xbox.getTrigger(Hand.kRight))
 				.withInput("Operator-X-Button", xbox.getXButton())
 				.withInput("Operator-Y-Button", xbox.getYButton())
 				.withInput("Operator-A-Button", xbox.getAButton())
@@ -204,12 +221,9 @@ public class Robot extends IterativeRobot {
 	public void robotOperation(DriverInput input) {
 		System.out.println("Operating with: <" + input.toString() + ">");
 		
-		if (input.getButton("Operator-X-Button") == true) {
+		if (input.getTrigger("Operator-Right-Trigger") == true) {
 			shooterTalonOne.set(.99);
 			shooterTalonTwo.set(.99);
-		} else if (input.getButton("Operator-Y-Button") == true) {
-			shooterTalonOne.set(-.99);
-			shooterTalonTwo.set(-.99);
 		} else {
 			shooterTalonOne.set(0);
 			shooterTalonTwo.set(0);
@@ -218,12 +232,15 @@ public class Robot extends IterativeRobot {
 		if (input.getButton("Operator-A-Button") == true) {
 			pickUpTalonOne.set(.35);
 			pickUpTalonTwo.set(-.35);
-		} else if (input.getButton("Operator-B-Button") == true) {
-			pickUpTalonOne.set(-.35);
-			pickUpTalonTwo.set(.35);
 		} else {
 			pickUpTalonOne.set(0);
 			pickUpTalonTwo.set(0);
+		}
+		
+		if (input.getButton("Operator-B-Button")) {
+			winchTalon.set(99);
+		} else {
+			winchTalon.set(0);
 		}
 	}
 	

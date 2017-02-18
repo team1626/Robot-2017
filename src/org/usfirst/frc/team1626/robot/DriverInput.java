@@ -90,6 +90,16 @@ public class DriverInput {
 		}
 	}
 	
+	public boolean getTrigger(String name) {
+		Object obj = inputs.get(name);
+		
+		if (obj instanceof Boolean) {
+			return (boolean)obj;
+		} else {
+			return false;
+		}
+	}
+	
 	public double getAxis(String name) {
 		Object obj = inputs.get(name);
 		
