@@ -39,10 +39,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends IterativeRobot {
 	private PowerDistributionPanel pdp;
 	
-	private CANTalon frontLeft;
-	private CANTalon frontRight;
-	private CANTalon backLeft;
-	private CANTalon backRight;
+	public CANTalon frontLeft;
+	public CANTalon frontRight;
+	public CANTalon backLeft;
+	public CANTalon backRight;
 	
 	private RobotDrive drive;
 
@@ -81,6 +81,8 @@ public class Robot extends IterativeRobot {
 		
 		pickUpTalonOne     = new Talon(4);
 		pickUpTalonTwo     = new Talon(6);
+		
+		// TODO - Can and velocity closed loop mode
 		shooterTalonOne    = new Talon(5);
 		shooterTalonTwo    = new Talon(3);
 		winchTalon         = new Talon(7);
@@ -112,6 +114,10 @@ public class Robot extends IterativeRobot {
 	
 	@Override
 	public void robotPeriodic() {
+		double leftAxisValue = driveLeft.getRawAxis(1);
+		double rightAxisValue = driveRight.getRawAxis(1);
+		drive.tankDrive(leftAxisValue, rightAxisValue);
+		
 		// given vout, pressure = 250(vout/vcc) - 25
 		// vcc is assumed to be 5.0
 		double pressure = (250.0 * (pressureSensor.getVoltage() / 5.0)) - 25;
@@ -148,10 +154,6 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopPeriodic() {
-		double leftAxisValue = driveLeft.getRawAxis(1);
-		double rightAxisValue = driveRight.getRawAxis(1);
-		drive.tankDrive(leftAxisValue, rightAxisValue);
-		
 		if (xbox.getTrigger(Hand.kRight)) {
 			shooterTalonOne.set(99);
 			shooterTalonTwo.set(99);
