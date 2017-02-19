@@ -122,7 +122,6 @@ public class Robot extends IterativeRobot {
 		// vcc is assumed to be 5.0
 		double pressure = (250.0 * (pressureSensor.getVoltage() / 5.0)) - 25;
 		SmartDashboard.putString("DB/String 4", String.format("%.1f", pressure));
-				
 		SmartDashboard.putNumber("PDP Voltage", pdp.getVoltage());
 	}
 	
