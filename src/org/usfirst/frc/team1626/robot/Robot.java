@@ -52,8 +52,8 @@ public class Robot extends IterativeRobot {
 	
 	private Talon pickUpTalonOne;
 	private Talon pickUpTalonTwo;
-	private Talon shooterTalonOne;
-	private Talon shooterTalonTwo;
+	private CANTalon shooterTalonOne;
+	private CANTalon shooterTalonTwo;
 	private Talon winchTalon;
 	
 	private DoubleSolenoid gearShifter;
@@ -81,21 +81,18 @@ public class Robot extends IterativeRobot {
 		
 		pickUpTalonOne     = new Talon(4);
 		pickUpTalonTwo     = new Talon(6);
-		
-		// TODO - Can and velocity closed loop mode
-		shooterTalonOne    = new Talon(5);
-		shooterTalonTwo    = new Talon(3);
+		// TODO change ids & velocity closed loop mode
+		shooterTalonOne    = new CANTalon(5);
+		shooterTalonTwo    = new CANTalon(3);
 		winchTalon         = new Talon(7);
 		
 		gearShifter        = new DoubleSolenoid(0, 1);
+		// Robot disabled = low gear, this sets it into high gear
+		gearShifter.set(DoubleSolenoid.Value.kReverse);
 		
 		pressureSensor     = new AnalogInput(0);
 		
 		actions 		   = new ActionRecorder();
-		
-		// When robot turns on it is in low gear, this sets it into high gear
-		gearShifter.set(DoubleSolenoid.Value.kReverse);
-		
 		actions.setMethod(this, "robotOperation", DriverInput.class).
 			setUpButton(xbox, 1).
 			setDownButton(xbox, 2).
@@ -107,9 +104,9 @@ public class Robot extends IterativeRobot {
 		DriverInput.nameInput("Driver-Right-Trigger");
 		DriverInput.nameInput("Operator-Right-Trigger");
 		DriverInput.nameInput("Operator-X-Button");
-		DriverInput.nameInput("Operator-Y-Button");
 		DriverInput.nameInput("Operator-A-Button");
 		DriverInput.nameInput("Operator-B-Button");
+		DriverInput.nameInput("Operator-Y-Button");
 	} 
 	
 	@Override
@@ -161,7 +158,7 @@ public class Robot extends IterativeRobot {
 			shooterTalonTwo.set(0);
 		}
 		
-		if (xbox.getAButton()) {
+		if (xbox.getXButton()) {
 			pickUpTalonOne.set(99);
 			pickUpTalonTwo.set(99);
 		} else {
@@ -169,7 +166,7 @@ public class Robot extends IterativeRobot {
 			pickUpTalonTwo.set(0);
 		}
 		
-		if (xbox.getBButton()) {
+		if (xbox.getAButton()) {
 			winchTalon.set(99);
 		} else {
 			winchTalon.set(0);
@@ -242,7 +239,7 @@ public class Robot extends IterativeRobot {
 			shooterTalonTwo.set(0);
 		}
 
-		if (input.getButton("Operator-A-Button") == true) {
+		if (input.getButton("Operator-X-Button") == true) {
 			pickUpTalonOne.set(.35);
 			pickUpTalonTwo.set(-.35);
 		} else {
@@ -250,7 +247,7 @@ public class Robot extends IterativeRobot {
 			pickUpTalonTwo.set(0);
 		}
 		
-		if (input.getButton("Operator-B-Button")) {
+		if (input.getButton("Operator-A-Button")) {
 			winchTalon.set(99);
 		} else {
 			winchTalon.set(0);
