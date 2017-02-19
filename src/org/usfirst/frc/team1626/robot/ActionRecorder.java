@@ -19,8 +19,8 @@ import edu.wpi.first.wpilibj.Utility;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ActionRecorder {
-	private boolean recording         = false;
-	private boolean recordingReady    = false;
+	private boolean recording = false;
+	private boolean recordingReady = false;
 	private long playbackStart;
 	
 	private List <DriverInput> driverInputs;
@@ -35,10 +35,9 @@ public class ActionRecorder {
 	
 	private List <File> autoFileList;
 	private int autoFileIndex;
-	private File fileToRecord         = null; 
+	private File fileToRecord = null; 
 	
 	// For timing accuracy measurements
-	
 	private long Sx     = 0;
 	private long Sx2    = 0;
 	private long Sxy    = 0;
