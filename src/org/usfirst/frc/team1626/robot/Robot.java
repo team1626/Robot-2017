@@ -102,6 +102,7 @@ public class Robot extends IterativeRobot {
 		DriverInput.nameInput("Driver-Right");
 		DriverInput.nameInput("Driver-Left-Trigger");
 		DriverInput.nameInput("Driver-Right-Trigger");
+		DriverInput.nameInput("Operator-Left-Trigger");
 		DriverInput.nameInput("Operator-Right-Trigger");
 		DriverInput.nameInput("Operator-X-Button");
 		DriverInput.nameInput("Operator-A-Button");
@@ -149,10 +150,13 @@ public class Robot extends IterativeRobot {
 	}
 
 	@Override
-	public void teleopPeriodic() {
+	public void teleopPeriodic() {		
 		if (xbox.getTrigger(Hand.kRight)) {
 			shooterTalonOne.set(99);
 			shooterTalonTwo.set(99);
+		} else if (xbox.getTrigger(Hand.kLeft)) {
+			shooterTalonOne.set(-99);
+			shooterTalonTwo.set(-99);
 		} else {
 			shooterTalonOne.set(0);
 			shooterTalonTwo.set(0);
@@ -161,6 +165,9 @@ public class Robot extends IterativeRobot {
 		if (xbox.getXButton()) {
 			pickUpTalonOne.set(99);
 			pickUpTalonTwo.set(99);
+		} else if (xbox.getYButton()) {
+			pickUpTalonOne.set(-99);
+			pickUpTalonTwo.set(-99);
 		} else {
 			pickUpTalonOne.set(0);
 			pickUpTalonTwo.set(0);
@@ -168,6 +175,8 @@ public class Robot extends IterativeRobot {
 		
 		if (xbox.getAButton()) {
 			winchTalon.set(99);
+		} else if (xbox.getBButton()) {
+			winchTalon.set(-99);
 		} else {
 			winchTalon.set(0);
 		}
@@ -201,6 +210,7 @@ public class Robot extends IterativeRobot {
 				.withInput("Driver-Right", driveRight.getRawAxis(1))
 				.withInput("Driver-Left-Trigger", driveLeft.getRawButton(1))
 				.withInput("Driver-Right-Trigger", driveRight.getRawButton(1))
+				.withInput("Operator-Left-Trigger", xbox.getTrigger(Hand.kLeft))
 				.withInput("Operator-Right-Trigger", xbox.getTrigger(Hand.kRight))
 				.withInput("Operator-X-Button", xbox.getXButton())
 				.withInput("Operator-Y-Button", xbox.getYButton())
@@ -231,17 +241,29 @@ public class Robot extends IterativeRobot {
 	public void robotOperation(DriverInput input) {
 		System.out.println("Operating with: <" + input.toString() + ">");
 		
-		if (input.getTrigger("Operator-Right-Trigger") == true) {
-			shooterTalonOne.set(.99);
-			shooterTalonTwo.set(.99);
+		if (input.getButton("Operator-A-Button")) {
+			winchTalon.set(99);
+		} else {
+			winchTalon.set(0);
+		}
+		
+		if (input.getTrigger("Operator-Right-Trigger")) {
+			shooterTalonOne.set(99);
+			shooterTalonTwo.set(99);
+		} else if (input.getTrigger("Operator-Left-Trigger")) {
+			shooterTalonOne.set(-99);
+			shooterTalonTwo.set(-99);
 		} else {
 			shooterTalonOne.set(0);
 			shooterTalonTwo.set(0);
 		}
-
-		if (input.getButton("Operator-X-Button") == true) {
-			pickUpTalonOne.set(.35);
-			pickUpTalonTwo.set(-.35);
+		
+		if (input.getButton("Operator-X-Button")) {
+			pickUpTalonOne.set(99);
+			pickUpTalonTwo.set(99);
+		} else if (input.getButton("Operator-Y-Button")) {
+			pickUpTalonOne.set(-99);
+			pickUpTalonTwo.set(-99);
 		} else {
 			pickUpTalonOne.set(0);
 			pickUpTalonTwo.set(0);
@@ -249,6 +271,8 @@ public class Robot extends IterativeRobot {
 		
 		if (input.getButton("Operator-A-Button")) {
 			winchTalon.set(99);
+		} else if (input.getButton("Operator-B-Button")) {
+			winchTalon.set(-99);
 		} else {
 			winchTalon.set(0);
 		}
