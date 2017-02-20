@@ -10,12 +10,18 @@ import edu.wpi.first.wpilibj.Talon;
 import com.ctre.CANTalon;
 
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.CameraServer;
+
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.RobotDrive;
+
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.vision.VisionThread;
+import org.opencv.core.Rect;
+import org.opencv.imgproc.Imgproc;
 
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -58,6 +64,15 @@ public class Robot extends IterativeRobot {
 	
 	private AnalogInput pressureSensor;
 	
+	private UsbCamera cam0;
+	private VisionThread visionThread;
+	private CameraServer server;
+	private double centerX = 0.0;
+	private double centerY = 0.0;
+	private double targetArea = 0.0;
+	
+	public final static Object imgLock = new Object();
+	
 	int autoLoopCounter;
 	ActionRecorder actions;
 		
@@ -91,11 +106,17 @@ public class Robot extends IterativeRobot {
 		
 		pressureSensor    		 = new AnalogInput(0);
 		
+		cam0					 = new UsbCamera("cam0", 0);
+		
 		actions 		   		 = new ActionRecorder();
 		
 		shooterTalonOneBottom.setInverted(true);
 		// Robot initially in low gear, this sets it into high gear
 		gearShifter.set(DoubleSolenoid.Value.kReverse);
+		cam0 = CameraServer.getInstance().startAutomaticCapture();
+		cam0.setResolution(640, 320);
+	    cam0.setFPS(15);
+	    cam0.setBrightness(0);
 		actions.setMethod(this, "robotOperation", DriverInput.class).
 			setUpButton(xbox, 1).
 			setDownButton(xbox, 2).
@@ -112,6 +133,18 @@ public class Robot extends IterativeRobot {
 		DriverInput.nameInput("Operator-Y-Button");
 		DriverInput.nameInput("Operator-Start-Button");
 		DriverInput.nameInput("Operator-Back-Button");
+		
+		visionThread = new VisionThread(cam0, new Pipeline(), pipeline -> {
+	        if (!pipeline.filterContoursOutput().isEmpty()) {
+	            Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
+	            synchronized (imgLock) {
+	                centerX = 2*r.x + r.width - (640/2);
+	                centerY = 2*r.y + r.height - (320/2);
+	                targetArea = r.area();
+	            }
+	        }
+	    });
+	    visionThread.start();
 	} 
 	
 	@Override
