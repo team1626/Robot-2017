@@ -1,0 +1,4 @@
+INDEX VERSION 1.129+C:\Users\1626\Desktop\Steamworks\.metadata\.plugins\org.eclipse.jdt.core
+2129694687.index
+2264162804.index
+1633922720.index
