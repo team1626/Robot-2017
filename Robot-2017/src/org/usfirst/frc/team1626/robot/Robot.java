@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.Talon;
 import com.ctre.CANTalon;
 
 import edu.wpi.first.wpilibj.AnalogInput;
-
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
@@ -60,8 +60,6 @@ public class Robot extends IterativeRobot {
 	
 	int autoLoopCounter;
 	ActionRecorder actions;
-	
-	// TODO - FRC Robot Vision API by user @kylecorry31 (https://github.com/kylecorry31)
 		
 	@Override
 	public void robotInit() {
@@ -96,13 +94,12 @@ public class Robot extends IterativeRobot {
 		actions 		   		 = new ActionRecorder();
 		
 		shooterTalonOneBottom.setInverted(true);
-		// TODO - Robot disabled = low gear, this sets it into high gear
+		// Robot initially in low gear, this sets it into high gear
 		gearShifter.set(DoubleSolenoid.Value.kReverse);
 		actions.setMethod(this, "robotOperation", DriverInput.class).
 			setUpButton(xbox, 1).
 			setDownButton(xbox, 2).
 			setRecordButton(xbox, 3);
-		// TODO - Add Gear-Shifter input
 		DriverInput.nameInput("Driver-Left");
 		DriverInput.nameInput("Driver-Right");
 		DriverInput.nameInput("Driver-Left-Trigger");
