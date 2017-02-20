@@ -47,8 +47,8 @@ public class Robot extends IterativeRobot {
 	private RobotDrive drive;
 
 	private XboxController xbox;
-	private Joystick driveLeft;
-	private Joystick driveRight;
+	private Joystick driverLeft;
+	private Joystick driverRight;
 	
 	private Talon winchTalon;
 	private Talon pickUpTalon;
@@ -78,8 +78,8 @@ public class Robot extends IterativeRobot {
 		backRight         		 = new CANTalon(1);
 		
 		drive            		 = new RobotDrive(frontLeft, backLeft, frontRight, backRight);
-		driveLeft         		 = new Joystick(0);
-		driveRight		  		 = new Joystick(1);
+		driverLeft         		 = new Joystick(0);
+		driverRight		  		 = new Joystick(1);
 		
 		xbox               		 = new XboxController(2);
 		
@@ -123,7 +123,7 @@ public class Robot extends IterativeRobot {
 	
 	@Override
 	public void robotPeriodic() {
-		drive.tankDrive(driveLeft.getRawAxis(1), driveRight.getRawAxis(1));
+		drive.tankDrive(driverLeft.getRawAxis(1), driverRight.getRawAxis(1));
 		
 		// given vout, pressure = 250(vout/vcc) - 25
 		// vcc is assumed to be 5.0
@@ -194,10 +194,10 @@ public class Robot extends IterativeRobot {
 		}
 		
 		// TODO - make sure solenoid values are correct (rn kFoward shifts to low gear)		
-		if ((driveLeft.getRawButton(1) == true || driveRight.getRawButton(1) == true) && highGear == true) {
+		if ((driverLeft.getRawButton(1) == true || driverRight.getRawButton(1) == true) && highGear == true) {
 			gearShifter.set(DoubleSolenoid.Value.kForward);
 			highGear = false;
-		} else if ((driveLeft.getRawButton(1) == true || driveRight.getRawButton(1) == true) && highGear == false) {
+		} else if ((driverLeft.getRawButton(1) == true || driverRight.getRawButton(1) == true) && highGear == false) {
 			gearShifter.set(DoubleSolenoid.Value.kReverse);
 			highGear = true;
 		}
@@ -218,10 +218,10 @@ public class Robot extends IterativeRobot {
 		
 		try {
 			actions.input(new DriverInput()
-				.withInput("Driver-Left", driveLeft.getRawAxis(1))
-				.withInput("Driver-Right", driveRight.getRawAxis(1))
-				.withInput("Driver-Left-Trigger", driveLeft.getRawButton(1))
-				.withInput("Driver-Right-Trigger", driveRight.getRawButton(1))
+				.withInput("Driver-Left", driverLeft.getRawAxis(1))
+				.withInput("Driver-Right", driverRight.getRawAxis(1))
+				.withInput("Driver-Left-Trigger", driverLeft.getRawButton(1))
+				.withInput("Driver-Right-Trigger", driverRight.getRawButton(1))
 				.withInput("Operator-Left-Trigger", xbox.getTrigger(Hand.kLeft))
 				.withInput("Operator-Right-Trigger", xbox.getTrigger(Hand.kRight))
 				.withInput("Operator-X-Button", xbox.getXButton())
