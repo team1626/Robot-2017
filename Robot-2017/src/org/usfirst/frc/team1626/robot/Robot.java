@@ -23,13 +23,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  * 
  * Talon VII :: Falcon Robotics Team 1626
- *  - Tankdrive
- *  - Xbox Controller
- *  - Shooter
- *  - Using the winch to climb
- *  - Ball pick up
- *  - Autonomous Echo code
- *  - Brownout protection
  *  
  * @author Rohan Mishra & Team 1626 Falcon Robotics
  * @version 1.0.0
@@ -52,7 +45,7 @@ public class Robot extends IterativeRobot {
 	
 	private Talon winchTalon;
 	private Talon pickUpTalon;
-	private Talon agitatorLeft;
+//	private Talon agitatorLeft;
 //	private Talon agitatorRight;
 	
 	private CANTalon shooterTalonOneTop;
@@ -67,6 +60,8 @@ public class Robot extends IterativeRobot {
 	
 	int autoLoopCounter;
 	ActionRecorder actions;
+	
+	// TODO - FRC Robot Vision API by user @kylecorry31 (https://github.com/kylecorry31)
 		
 	@Override
 	public void robotInit() {
@@ -85,7 +80,7 @@ public class Robot extends IterativeRobot {
 		
 		winchTalon               = new Talon(0);
 		pickUpTalon    		 	 = new Talon(1);
-		agitatorLeft			 = new Talon(2);
+//		agitatorLeft			 = new Talon(2);
 //		agitatorRight			 = new Talon(2);
 		// TODO - Change ids & implement velocity closed loop control
 		shooterTalonOneTop       = new CANTalon(4);
@@ -94,11 +89,11 @@ public class Robot extends IterativeRobot {
 		shooterTalonTwoBottom    = new CANTalon(5);
 		
 		gearShifter       		 = new DoubleSolenoid(4, 5);
+		highGear				 = new Toggle();
 		
 		pressureSensor    		 = new AnalogInput(0);
 		
 		actions 		   		 = new ActionRecorder();
-		highGear				 = new Toggle();
 		
 		shooterTalonOneBottom.setInverted(true);
 		// TODO - Robot disabled = low gear, this sets it into high gear
