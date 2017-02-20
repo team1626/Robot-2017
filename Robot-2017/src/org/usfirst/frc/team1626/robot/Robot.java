@@ -61,7 +61,7 @@ public class Robot extends IterativeRobot {
 	private CANTalon shooterTalonTwoBottom;
 	
 	private DoubleSolenoid gearShifter;
-	private boolean highGear = true;
+	Toggle highGear;
 	
 	private AnalogInput pressureSensor;
 	
@@ -98,6 +98,7 @@ public class Robot extends IterativeRobot {
 		pressureSensor    		 = new AnalogInput(0);
 		
 		actions 		   		 = new ActionRecorder();
+		highGear				 = new Toggle();
 		
 		shooterTalonOneBottom.setInverted(true);
 		// TODO - Robot disabled = low gear, this sets it into high gear
@@ -185,21 +186,22 @@ public class Robot extends IterativeRobot {
 			pickUpTalon.set(0);
 		}
 		
-		if (xbox.getAButton()) {
+		if (xbox.getStartButton()) {
 			winchTalon.set(.99);
-		} else if (xbox.getBButton()) {
+		} else if (xbox.getBackButton()) {
 			winchTalon.set(-.99);
 		} else {
 			winchTalon.set(0);
 		}
 		
 		// TODO - make sure solenoid values are correct (rn kFoward shifts to low gear)		
-		if ((driverLeft.getRawButton(1) == true || driverRight.getRawButton(1) == true) && highGear == true) {
+		boolean shift = (driverLeft.getRawButton(1) || driverRight.getRawButton(1));
+		highGear.input(shift);
+		System.out.println("Gear State: " + highGear.getState() + "Button: " + shift);
+		if (highGear.getState()) {
 			gearShifter.set(DoubleSolenoid.Value.kForward);
-			highGear = false;
-		} else if ((driverLeft.getRawButton(1) == true || driverRight.getRawButton(1) == true) && highGear == false) {
+		} else {
 			gearShifter.set(DoubleSolenoid.Value.kReverse);
-			highGear = true;
 		}
 		
 		// RoboRIO Brownout triggers @ 6.8V		
@@ -257,6 +259,16 @@ public class Robot extends IterativeRobot {
 		
 		input.getAxis("Drive-Left");
 		input.getAxis("Driver-Right");
+		drive.tankDrive(driverLeft.getRawAxis(1), driverRight.getRawAxis(1));
+		
+		boolean shift = (input.getButton("Driver-Right-Trigger") || input.getButton("Driver-Left-Trigger"));
+		highGear.input(shift);
+		System.out.println("Gear State: " + highGear.getState() + "Button: " + shift);
+		if (highGear.getState()) {
+			gearShifter.set(DoubleSolenoid.Value.kForward);
+		} else {
+			gearShifter.set(DoubleSolenoid.Value.kReverse);
+		}
 		
 		if (input.getTrigger("Operator-Right-Trigger")) {
 			shooterTalonOneTop.set(.99);
@@ -283,9 +295,9 @@ public class Robot extends IterativeRobot {
 			pickUpTalon.set(0);
 		}
 		
-		if (input.getButton("Operator-A-Button")) {
+		if (input.getButton("Operator-Start-Button")) {
 			winchTalon.set(.99);
-		} else if (input.getButton("Operator-B-Button")) {
+		} else if (input.getButton("Operator-Back-Button")) {
 			winchTalon.set(-.99);
 		} else {
 			winchTalon.set(0);
