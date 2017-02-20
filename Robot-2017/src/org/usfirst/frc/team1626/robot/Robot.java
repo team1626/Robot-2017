@@ -87,7 +87,7 @@ public class Robot extends IterativeRobot {
 		pickUpTalon    		 	 = new Talon(1);
 		agitatorLeft			 = new Talon(2);
 //		agitatorRight			 = new Talon(2);
-		// TODO - Change ids & velocity closed loop mode
+		// TODO - Change ids & implement velocity closed loop control
 		shooterTalonOneTop       = new CANTalon(4);
 		shooterTalonOneBottom    = new CANTalon(6);
 		shooterTalonTwoTop       = new CANTalon(2);
@@ -117,6 +117,8 @@ public class Robot extends IterativeRobot {
 		DriverInput.nameInput("Operator-A-Button");
 		DriverInput.nameInput("Operator-B-Button");
 		DriverInput.nameInput("Operator-Y-Button");
+		DriverInput.nameInput("Operator-Start-Button");
+		DriverInput.nameInput("Operator-Back-Button");
 	} 
 	
 	@Override
@@ -201,7 +203,7 @@ public class Robot extends IterativeRobot {
 		}
 		
 		// RoboRIO Brownout triggers @ 6.8V		
-		if (Timer.getMatchTime() >= 20.0) {
+		if (Timer.getMatchTime() >= 7.0) {
 			while (pdp.getVoltage() <= 7.2) {
 				xbox.setRumble(RumbleType.kLeftRumble, 1.0);
 				xbox.setRumble(RumbleType.kRightRumble, 1.0);
@@ -225,7 +227,9 @@ public class Robot extends IterativeRobot {
 				.withInput("Operator-X-Button", xbox.getXButton())
 				.withInput("Operator-Y-Button", xbox.getYButton())
 				.withInput("Operator-A-Button", xbox.getAButton())
-				.withInput("Operator-B-Button", xbox.getBButton()));
+				.withInput("Operator-B-Button", xbox.getBButton())
+				.withInput("Operator-Start-Button", xbox.getStartButton())
+				.withInput("Operator-Back-Button", xbox.getBackButton()));
 		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
