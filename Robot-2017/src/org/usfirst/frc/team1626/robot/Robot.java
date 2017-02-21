@@ -108,7 +108,7 @@ public class Robot extends IterativeRobot {
 		
 		actions 		   		 = new ActionRecorder();
 		
-		shooterTalonOneBottom.setInverted(true);
+		shooterTalonOneTop.setInverted(true);
 		// Robot initially in low gear, this sets it into high gear
 		gearShifter.set(DoubleSolenoid.Value.kReverse);
 //		cam0 = CameraServer.getInstance().startAutomaticCapture();
@@ -184,52 +184,6 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopPeriodic() {		
-		if (xbox.getTrigger(Hand.kRight)) {
-			shooterTalonOneTop.set(.99);
-			shooterTalonOneBottom.set(.99);
-			shooterTalonTwoTop.set(.99);
-			shooterTalonTwoBottom.set(.99);
-			agitatorTalon.set(.99);
-		} else if (xbox.getTrigger(Hand.kLeft)) {
-			shooterTalonOneTop.set(-.99);
-			shooterTalonOneBottom.set(-.99);
-			shooterTalonTwoTop.set(-.99);
-			shooterTalonTwoBottom.set(-.99);
-			agitatorTalon.set(-.99);
-		} else {
-			shooterTalonOneTop.set(0);
-			shooterTalonOneBottom.set(0);
-			shooterTalonTwoTop.set(0);
-			shooterTalonTwoBottom.set(0);
-			agitatorTalon.set(0);
-		}
-		
-		if (xbox.getXButton()) {
-			pickUpTalon.set(.99);
-		} else if (xbox.getYButton()) {
-			pickUpTalon.set(-.99);
-		} else {
-			pickUpTalon.set(0);
-		}
-		
-		if (xbox.getStartButton()) {
-			winchTalon.set(.99);
-		} else if (xbox.getBackButton()) {
-			winchTalon.set(-.99);
-		} else {
-			winchTalon.set(0);
-		}
-		
-		// TODO - make sure solenoid values are correct (rn kFoward shifts to low gear)		
-		boolean shift = (driverLeft.getRawButton(1) || driverRight.getRawButton(1));
-		highGear.input(shift);
-		System.out.println("Gear State: " + highGear.getState() + "Button: " + shift);
-		if (highGear.getState()) {
-			gearShifter.set(DoubleSolenoid.Value.kForward);
-		} else {
-			gearShifter.set(DoubleSolenoid.Value.kReverse);
-		}
-		
 		// RoboRIO Brownout triggers @ 6.8V		
 		if (Timer.getMatchTime() >= 7.0) {
 			while (pdp.getVoltage() <= 7.2) {
@@ -296,13 +250,13 @@ public class Robot extends IterativeRobot {
 			gearShifter.set(DoubleSolenoid.Value.kReverse);
 		}
 		
-		if (input.getTrigger("Operator-Right-Trigger")) {
+		if (input.getButton("Operator-X-Button")) {
 			shooterTalonOneTop.set(.99);
 			shooterTalonOneBottom.set(.99);
 			shooterTalonTwoTop.set(.99);
 			shooterTalonTwoBottom.set(.99);
 			agitatorTalon.set(.99);
-		} else if (input.getTrigger("Operator-Left-Trigger")) {
+		} else if (input.getButton("Operator-Y-Button")) {
 			shooterTalonOneTop.set(-.99);
 			shooterTalonOneBottom.set(-.99);
 			shooterTalonTwoTop.set(-.99);
@@ -316,9 +270,9 @@ public class Robot extends IterativeRobot {
 			agitatorTalon.set(0);
 		}
 		
-		if (input.getButton("Operator-X-Button")) {
+		if (input.getButton("Operator-A-Button")) {
 			pickUpTalon.set(.99);
-		} else if (input.getButton("Operator-Y-Button")) {
+		} else if (input.getButton("Operator-B-Button")) {
 			pickUpTalon.set(-.99);
 		} else {
 			pickUpTalon.set(0);

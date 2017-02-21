@@ -769,3 +769,39 @@ This warning can be switched off on the Team > Git > Confirmations and Warnings 
 
 !ENTRY WPILib_Java_Robot_Development 1 0 2017-02-20 19:31:15.629
 !MESSAGE Updating projects
+
+!ENTRY WPILib_Java_Robot_Development 1 0 2017-02-20 20:21:47.508
+!MESSAGE Running ant file: C:\Users\1626\Desktop\Steamworks\Robot-2017\build.xml
+
+!ENTRY WPILib_Java_Robot_Development 1 0 2017-02-20 20:21:47.530
+!MESSAGE Targets: deploy, Mode: run
+
+!ENTRY WPILib_Java_Robot_Development 1 0 2017-02-20 20:25:26.854
+!MESSAGE Running ant file: C:\Users\1626\Desktop\Steamworks\Robot-2017\build.xml
+
+!ENTRY WPILib_Java_Robot_Development 1 0 2017-02-20 20:25:26.865
+!MESSAGE Targets: deploy, Mode: run
+
+!ENTRY WPILib_Java_Robot_Development 1 0 2017-02-20 20:29:04.334
+!MESSAGE Running ant file: C:\Users\1626\Desktop\Steamworks\Robot-2017\build.xml
+
+!ENTRY WPILib_Java_Robot_Development 1 0 2017-02-20 20:29:04.345
+!MESSAGE Targets: deploy, Mode: run
+
+!ENTRY WPILib_Java_Robot_Development 1 0 2017-02-20 20:34:42.134
+!MESSAGE Running ant file: C:\Users\1626\Desktop\Steamworks\Robot-2017\build.xml
+
+!ENTRY WPILib_Java_Robot_Development 1 0 2017-02-20 20:34:42.159
+!MESSAGE Targets: deploy, Mode: run
+
+!ENTRY WPILib_Java_Robot_Development 1 0 2017-02-20 20:38:37.759
+!MESSAGE Running ant file: C:\Users\1626\Desktop\Steamworks\Robot-2017\build.xml
+
+!ENTRY WPILib_Java_Robot_Development 1 0 2017-02-20 20:38:37.768
+!MESSAGE Targets: deploy, Mode: run
+
+!ENTRY WPILib_Java_Robot_Development 1 0 2017-02-20 20:42:30.042
+!MESSAGE Running ant file: C:\Users\1626\Desktop\Steamworks\Robot-2017\build.xml
+
+!ENTRY WPILib_Java_Robot_Development 1 0 2017-02-20 20:42:30.056
+!MESSAGE Targets: deploy, Mode: run
