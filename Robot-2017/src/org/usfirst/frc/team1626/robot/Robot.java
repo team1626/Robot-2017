@@ -49,6 +49,7 @@ public class Robot extends IterativeRobot {
 	private CANTalon shooterTalonTwoBottom;
 	
 	private DoubleSolenoid gearShifter;
+	private DoubleSolenoid driveTrainShifter;
 	Toggle highGear;
 	
 	private AnalogInput pressureSensor;
@@ -79,7 +80,8 @@ public class Robot extends IterativeRobot {
 		shooterTalonTwoTop       = new CANTalon(2);
 		shooterTalonTwoBottom    = new CANTalon(5);
 		
-		gearShifter       		 = new DoubleSolenoid(4, 5);
+		gearShifter			     = new DoubleSolenoid(6, 7);
+		driveTrainShifter        = new DoubleSolenoid(4, 5);
 		highGear				 = new Toggle();
 		
 		pressureSensor    		 = new AnalogInput(0);
@@ -94,7 +96,7 @@ public class Robot extends IterativeRobot {
 		
 		shooterTalonOneTop.setInverted(true);
 		// Robot initially in low gear, this sets it into high gear
-		gearShifter.set(DoubleSolenoid.Value.kReverse);
+		driveTrainShifter.set(DoubleSolenoid.Value.kReverse);
 		actions.setMethod(this, "robotOperation", DriverInput.class).
 			setUpButton(xbox, 1).
 			setDownButton(xbox, 2).
@@ -124,7 +126,7 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("PDP Voltage", pdp.getVoltage());
 		
 		// RoboRIO Brownout triggers @ 6.8V		
-		if (Timer.getMatchTime() >= 7.0) {
+		if (Timer.getMatchTime() >= 15.0) {
 			while (pdp.getVoltage() <= 7.2) {
 				xbox.setRumble(RumbleType.kLeftRumble, 1.0);
 				xbox.setRumble(RumbleType.kRightRumble, 1.0);
@@ -213,9 +215,9 @@ public class Robot extends IterativeRobot {
 		highGear.input(shift);
 		System.out.println("Gear State: " + highGear.getState() + "Button: " + shift);
 		if (highGear.getState()) {
-			gearShifter.set(DoubleSolenoid.Value.kForward);
+			driveTrainShifter.set(DoubleSolenoid.Value.kForward);
 		} else {
-			gearShifter.set(DoubleSolenoid.Value.kReverse);
+			driveTrainShifter.set(DoubleSolenoid.Value.kReverse);
 		}
 		
 		if (input.getButton("Operator-X-Button")) {
@@ -252,6 +254,10 @@ public class Robot extends IterativeRobot {
 			winchTalon.set(-.99);
 		} else {
 			winchTalon.set(0);
+		}
+		
+		if (input.getButton("Operator-Left-Axis")) {
+			System.out.println(xbox.getRawAxis(2));
 		}
 	}
 	
