@@ -9,8 +9,11 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Talon;
 import com.ctre.CANTalon;
 
+import edu.wpi.cscore.CvSink;
+import edu.wpi.cscore.CvSource;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.cscore.UsbCamera;
+import org.opencv.core.Mat;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 
@@ -54,10 +57,12 @@ public class Robot extends IterativeRobot {
 	
 	private AnalogInput pressureSensor;
 	
+	Pipeline visionProcessing;
+	Thread visionThread;
+	
 	private RobotDrive drive;
 	private Joystick driverLeft;
 	private Joystick driverRight;
-	
 	private XboxController xbox;
 	
 	int autoLoopCounter;
@@ -86,10 +91,31 @@ public class Robot extends IterativeRobot {
 		
 		pressureSensor    		 = new AnalogInput(0);
 		
+		visionProcessing		 = new Pipeline();
+		visionThread = new Thread(() -> {
+			UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+			camera.setResolution(640, 480);
+			
+			CvSink cvSink = CameraServer.getInstance().getVideo();
+			CvSource outputStream = CameraServer.getInstance().putVideo("Contours", 640, 480);
+			
+			Mat mat = new Mat();
+			
+			while (!Thread.interrupted()) {
+				if (cvSink.grabFrame(mat) == 0) {
+					outputStream.notifyError(cvSink.getError());
+					continue;
+				}
+				
+				visionProcessing.process(mat);
+			}
+			visionThread.setDaemon(true);
+			visionThread.start();
+		});
+		
 		drive            		 = new RobotDrive(frontLeftTalon, backLeftTalon, frontRightTalon, backRightTalon);
 		driverLeft         		 = new Joystick(0);
 		driverRight		  		 = new Joystick(1);
-		
 		xbox               		 = new XboxController(2);
 		
 		actions 		   		 = new ActionRecorder();
@@ -254,10 +280,6 @@ public class Robot extends IterativeRobot {
 			winchTalon.set(-.99);
 		} else {
 			winchTalon.set(0);
-		}
-		
-		if (input.getButton("Operator-Left-Axis")) {
-			System.out.println(xbox.getRawAxis(2));
 		}
 	}
 	
