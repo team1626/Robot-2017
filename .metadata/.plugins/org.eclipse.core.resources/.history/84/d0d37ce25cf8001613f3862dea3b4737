@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  * Talon VII :: Robot
  * 
- * @author Rohan Mishra, Nikhil Sathi, Jonathan Heitz, Mr. Daniel (iDubbbzTv, Jr.) & Team 1626 Falcon Robotics
+ * @author Rohan Mishra & Team 1626 Falcon Robotics
  * @version 1.0.0
  * 
  */
@@ -54,9 +54,6 @@ public class Robot extends IterativeRobot {
 	private CANTalon shooterTwoBottomMotor;
 	
 	private Talon winchTalon;
-	
-	private Talon agitatorLeft;
-	private Talon agitatorRight;
 	
 	private AnalogInput pneumaticPressure;
 	
@@ -106,9 +103,6 @@ public class Robot extends IterativeRobot {
 		shooterTwoTopMotor = new CANTalon(2);
 		shooterTwoBottomMotor = new CANTalon(5);
 		
-		agitatorLeft = new Talon();
-		agitatorRight = new Talon();
-		
 		shooterOneBottomMotor.setInverted(true);
 	
 		gearShifter        = new DoubleSolenoid(4, 5);
@@ -130,7 +124,6 @@ public class Robot extends IterativeRobot {
 		DriverInput.nameInput("Shift-Input");
 		DriverInput.nameInput("Winch-Button");
 		DriverInput.nameInput("Winch-Reverse");
-		
 		
 //		DriverInput.nameInput("Shooter-Forward");
 //		DriverInput.nameInput("Shooter-Backward");
@@ -161,7 +154,6 @@ public class Robot extends IterativeRobot {
 	public void autonomousInit() {
 		autoLoopCounter = 0;
 		actions.autonomousInit();
-		
 	}
 	
 	@Override
@@ -190,8 +182,6 @@ public class Robot extends IterativeRobot {
 		{
 			System.out.println("AP: " + e.toString());
 		}
-		
-		
 	}
 	
 	@Override
@@ -268,22 +258,19 @@ public class Robot extends IterativeRobot {
 			shooterTwoTopMotor.set(.99);
 			shooterOneBottomMotor.set(.99);
 			shooterTwoBottomMotor.set(.99);
-			agitatorLeft.set(.99);
-			agitatorRight.set(.99);
+			agitatorMotor.set(.99);
 		} else if (input.getButton("Operator-Y-Button") == true) {
 			shooterOneTopMotor.set(-.99);
 			shooterTwoTopMotor.set(-.99);
 			shooterOneBottomMotor.set(-.99);
 			shooterTwoBottomMotor.set(-.99);
-			agitatorLeft.set(-.99);
-			agitatorRight.set(-.99);
+			agitatorMotor.set(-.99);
 		} else {
 			shooterOneTopMotor.set(0);
 			shooterTwoTopMotor.set(0);
 			shooterOneBottomMotor.set(0);
 			shooterTwoBottomMotor.set(0);
-			agitatorLeft.set(0);
-			agitatorRight.set(0);
+			agitatorMotor.set(0);
 		}
 
 		if (input.getButton("Operator-A-Button") == true) {
@@ -314,9 +301,9 @@ public class Robot extends IterativeRobot {
 //		System.out.println("WinchButton: " + winch);
 		
 		if (winch) {
-			winchTalon.set(-.99);
+			winchTalon.set(-1.0);
 		} else if (input.getButton("Winch-Reverse")) {
-			winchTalon.set(.99);
+			winchTalon.set(1.0);
 		} else {
 			winchTalon.set(0);
 		}

@@ -811,3 +811,9 @@ This warning can be switched off on the Team > Git > Confirmations and Warnings 
 
 !ENTRY WPILib_Java_Robot_Development 1 0 2017-02-20 20:54:13.529
 !MESSAGE Targets: deploy, Mode: run
+
+!ENTRY WPILib_Java_Robot_Development 1 0 2017-02-21 12:35:32.138
+!MESSAGE Running ant file: C:\Users\1626\Desktop\Steamworks\Robot-2017\build.xml
+
+!ENTRY WPILib_Java_Robot_Development 1 0 2017-02-21 12:35:32.146
+!MESSAGE Targets: deploy, Mode: run

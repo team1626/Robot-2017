@@ -161,7 +161,6 @@ public class Robot extends IterativeRobot {
 	public void autonomousInit() {
 		autoLoopCounter = 0;
 		actions.autonomousInit();
-		
 	}
 	
 	@Override
