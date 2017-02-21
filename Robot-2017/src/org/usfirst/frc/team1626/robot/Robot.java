@@ -9,6 +9,9 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Talon;
 import com.ctre.CANTalon;
 
+import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.cscore.UsbCamera;
+
 import edu.wpi.first.wpilibj.AnalogInput;
 
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -16,12 +19,6 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.RobotDrive;
-
-//import edu.wpi.cscore.UsbCamera;
-//import edu.wpi.first.wpilibj.CameraServer;
-//import edu.wpi.first.wpilibj.vision.VisionThread;
-//import org.opencv.core.Rect;
-//import org.opencv.imgproc.Imgproc;
 
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -38,21 +35,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends IterativeRobot {
 	private PowerDistributionPanel pdp;
 	
-	public CANTalon frontLeft;
-	public CANTalon frontRight;
-	public CANTalon backLeft;
-	public CANTalon backRight;
-	
-	private RobotDrive drive;
-
-	private XboxController xbox;
-	private Joystick driverLeft;
-	private Joystick driverRight;
+	public CANTalon frontLeftTalon;
+	public CANTalon frontRightTalon;
+	public CANTalon backLeftTalon;
+	public CANTalon backRightTalon;
 	
 	private Talon winchTalon;
 	private Talon pickUpTalon;
 	private Talon agitatorTalon;
-	
 	private CANTalon shooterTalonOneTop;
 	private CANTalon shooterTalonOneBottom;
 	private CANTalon shooterTalonTwoTop;
@@ -63,14 +53,11 @@ public class Robot extends IterativeRobot {
 	
 	private AnalogInput pressureSensor;
 	
-//	private UsbCamera cam0;
-//	private VisionThread visionThread;
-//	private CameraServer server;
-//	private double centerX = 0.0;
-//	private double centerY = 0.0;
-//	private double targetArea = 0.0;
+	private RobotDrive drive;
+	private Joystick driverLeft;
+	private Joystick driverRight;
 	
-//	public final static Object imgLock = new Object();
+	private XboxController xbox;
 	
 	int autoLoopCounter;
 	ActionRecorder actions;
@@ -79,21 +66,14 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 		pdp               		 = new PowerDistributionPanel(0);
 		
-		frontLeft         		 = new CANTalon(3);
-		frontRight         	  	 = new CANTalon(10);
-		backLeft          		 = new CANTalon(11);
-		backRight         		 = new CANTalon(1);
-		
-		drive            		 = new RobotDrive(frontLeft, backLeft, frontRight, backRight);
-		driverLeft         		 = new Joystick(0);
-		driverRight		  		 = new Joystick(1);
-		
-		xbox               		 = new XboxController(2);
+		frontLeftTalon         	 = new CANTalon(3);
+		frontRightTalon        	 = new CANTalon(10);
+		backLeftTalon       	 = new CANTalon(11);
+		backRightTalon     		 = new CANTalon(1);
 		
 		winchTalon               = new Talon(0);
 		pickUpTalon    		 	 = new Talon(1);
 		agitatorTalon			 = new Talon(2);
-		// TODO - Change ids & implement velocity closed loop control
 		shooterTalonOneTop       = new CANTalon(4);
 		shooterTalonOneBottom    = new CANTalon(6);
 		shooterTalonTwoTop       = new CANTalon(2);
@@ -104,17 +84,17 @@ public class Robot extends IterativeRobot {
 		
 		pressureSensor    		 = new AnalogInput(0);
 		
-//		cam0					 = new UsbCamera("cam0", 0);
+		drive            		 = new RobotDrive(frontLeftTalon, backLeftTalon, frontRightTalon, backRightTalon);
+		driverLeft         		 = new Joystick(0);
+		driverRight		  		 = new Joystick(1);
+		
+		xbox               		 = new XboxController(2);
 		
 		actions 		   		 = new ActionRecorder();
 		
 		shooterTalonOneTop.setInverted(true);
 		// Robot initially in low gear, this sets it into high gear
 		gearShifter.set(DoubleSolenoid.Value.kReverse);
-//		cam0 = CameraServer.getInstance().startAutomaticCapture();
-//		cam0.setResolution(640, 320);
-//	    cam0.setFPS(15);
-//	    cam0.setBrightness(0);
 		actions.setMethod(this, "robotOperation", DriverInput.class).
 			setUpButton(xbox, 1).
 			setDownButton(xbox, 2).
@@ -123,6 +103,8 @@ public class Robot extends IterativeRobot {
 		DriverInput.nameInput("Driver-Right");
 		DriverInput.nameInput("Driver-Left-Trigger");
 		DriverInput.nameInput("Driver-Right-Trigger");
+		DriverInput.nameInput("Operator-Left-Stick");
+		DriverInput.nameInput("Operator-Right-Stick");
 		DriverInput.nameInput("Operator-Left-Trigger");
 		DriverInput.nameInput("Operator-Right-Trigger");
 		DriverInput.nameInput("Operator-X-Button");
@@ -131,29 +113,33 @@ public class Robot extends IterativeRobot {
 		DriverInput.nameInput("Operator-Y-Button");
 		DriverInput.nameInput("Operator-Start-Button");
 		DriverInput.nameInput("Operator-Back-Button");
-		
-//		visionThread = new VisionThread(cam0, new Pipeline(), pipeline -> {
-//	        if (!pipeline.filterContoursOutput().isEmpty()) {
-//	            Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
-//	            synchronized (imgLock) {
-//	                centerX = 2*r.x + r.width - (640/2);
-//	                centerY = 2*r.y + r.height - (320/2);
-//	                targetArea = r.area();
-//	            }
-//	        }
-//	    });
-//	    visionThread.start();
 	} 
 	
 	@Override
 	public void robotPeriodic() {
-		drive.tankDrive(driverLeft.getRawAxis(1), driverRight.getRawAxis(1));
+		double leftJoystickAxis = driverLeft.getRawAxis(1);
+		double rightJoystickAxis = driverRight.getRawAxis(1);
+		drive.tankDrive(leftJoystickAxis, rightJoystickAxis);
 		
 		// given vout, pressure = 250(vout/vcc) - 25
 		// vcc is assumed to be 5.0
 		double pressure = (250.0 * (pressureSensor.getVoltage() / 5.0)) - 25;
 		SmartDashboard.putString("DB/String 4", String.format("%.1f", pressure));
 		SmartDashboard.putNumber("PDP Voltage", pdp.getVoltage());
+		
+		// RoboRIO Brownout triggers @ 6.8V		
+		if (Timer.getMatchTime() >= 7.0) {
+			while (pdp.getVoltage() <= 7.2) {
+				xbox.setRumble(RumbleType.kLeftRumble, 1.0);
+				xbox.setRumble(RumbleType.kRightRumble, 1.0);
+						
+				if (pdp.getVoltage() > 7.2) {
+					// TODO - Reset certain components
+							
+					break;
+				}
+			}
+		}
 	}
 	
 	@Override
@@ -183,21 +169,7 @@ public class Robot extends IterativeRobot {
 	}
 
 	@Override
-	public void teleopPeriodic() {		
-		// RoboRIO Brownout triggers @ 6.8V		
-		if (Timer.getMatchTime() >= 7.0) {
-			while (pdp.getVoltage() <= 7.2) {
-				xbox.setRumble(RumbleType.kLeftRumble, 1.0);
-				xbox.setRumble(RumbleType.kRightRumble, 1.0);
-				
-				if (pdp.getVoltage() > 7.2) {
-					// TODO - Reset certain components
-					
-					break;
-				}
-			}
-		}
-		
+	public void teleopPeriodic() {				
 		try {
 			actions.input(new DriverInput()
 				.withInput("Driver-Left", driverLeft.getRawAxis(1))
@@ -237,9 +209,9 @@ public class Robot extends IterativeRobot {
 	public void robotOperation(DriverInput input) {
 		System.out.println("Operating with: <" + input.toString() + ">");
 		
-		input.getAxis("Drive-Left");
-		input.getAxis("Driver-Right");
-		drive.tankDrive(driverLeft.getRawAxis(1), driverRight.getRawAxis(1));
+		double leftJoystickAxis = input.getAxis("Driver-Left");
+		double rightJoystickAxis = input.getAxis("Driver-Right");
+		drive.tankDrive(leftJoystickAxis, rightJoystickAxis);
 		
 		boolean shift = (input.getButton("Driver-Right-Trigger") || input.getButton("Driver-Left-Trigger"));
 		highGear.input(shift);
