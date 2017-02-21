@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  * Talon VII :: Robot
  * 
- * @author Rohan Mishra & Team 1626 Falcon Robotics
+ * @author Rohan Mishra, Nikhil Sathi, Jonathan Heitz, Mr. Daniel (iDubbbzTv, Jr.) & Team 1626 Falcon Robotics
  * @version 1.0.0
  * 
  */
@@ -125,6 +125,7 @@ public class Robot extends IterativeRobot {
 		DriverInput.nameInput("Winch-Button");
 		DriverInput.nameInput("Winch-Reverse");
 		
+		
 //		DriverInput.nameInput("Shooter-Forward");
 //		DriverInput.nameInput("Shooter-Backward");
 //		DriverInput.nameInput("Driver-Forward");
@@ -182,6 +183,8 @@ public class Robot extends IterativeRobot {
 		{
 			System.out.println("AP: " + e.toString());
 		}
+		
+		
 	}
 	
 	@Override
@@ -301,9 +304,9 @@ public class Robot extends IterativeRobot {
 //		System.out.println("WinchButton: " + winch);
 		
 		if (winch) {
-			winchTalon.set(-1.0);
+			winchTalon.set(-.99);
 		} else if (input.getButton("Winch-Reverse")) {
-			winchTalon.set(1.0);
+			winchTalon.set(.99);
 		} else {
 			winchTalon.set(0);
 		}
