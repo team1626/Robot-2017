@@ -35,10 +35,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends IterativeRobot {
 	private PowerDistributionPanel pdp;
 	
-	public CANTalon frontLeftTalon;
-	public CANTalon frontRightTalon;
-	public CANTalon backLeftTalon;
-	public CANTalon backRightTalon;
+	private CANTalon frontLeftTalon;
+	private CANTalon frontRightTalon;
+	private CANTalon backLeftTalon;
+	private CANTalon backRightTalon;
 	
 	private Talon winchTalon;
 	private Talon pickUpTalon;
@@ -116,11 +116,7 @@ public class Robot extends IterativeRobot {
 	} 
 	
 	@Override
-	public void robotPeriodic() {
-		double leftJoystickAxis = driverLeft.getRawAxis(1);
-		double rightJoystickAxis = driverRight.getRawAxis(1);
-		drive.tankDrive(leftJoystickAxis, rightJoystickAxis);
-		
+	public void robotPeriodic() {		
 		// given vout, pressure = 250(vout/vcc) - 25
 		// vcc is assumed to be 5.0
 		double pressure = (250.0 * (pressureSensor.getVoltage() / 5.0)) - 25;
