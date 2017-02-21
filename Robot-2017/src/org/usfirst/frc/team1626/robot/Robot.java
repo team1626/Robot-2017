@@ -17,11 +17,11 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.RobotDrive;
 
-import edu.wpi.cscore.UsbCamera;
-import edu.wpi.first.wpilibj.CameraServer;
-import edu.wpi.first.wpilibj.vision.VisionThread;
-import org.opencv.core.Rect;
-import org.opencv.imgproc.Imgproc;
+//import edu.wpi.cscore.UsbCamera;
+//import edu.wpi.first.wpilibj.CameraServer;
+//import edu.wpi.first.wpilibj.vision.VisionThread;
+//import org.opencv.core.Rect;
+//import org.opencv.imgproc.Imgproc;
 
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -189,16 +189,19 @@ public class Robot extends IterativeRobot {
 			shooterTalonOneBottom.set(.99);
 			shooterTalonTwoTop.set(.99);
 			shooterTalonTwoBottom.set(.99);
+			agitatorTalon.set(.99);
 		} else if (xbox.getTrigger(Hand.kLeft)) {
 			shooterTalonOneTop.set(-.99);
 			shooterTalonOneBottom.set(-.99);
 			shooterTalonTwoTop.set(-.99);
 			shooterTalonTwoBottom.set(-.99);
+			agitatorTalon.set(-.99);
 		} else {
 			shooterTalonOneTop.set(0);
 			shooterTalonOneBottom.set(0);
 			shooterTalonTwoTop.set(0);
 			shooterTalonTwoBottom.set(0);
+			agitatorTalon.set(0);
 		}
 		
 		if (xbox.getXButton()) {
@@ -298,16 +301,19 @@ public class Robot extends IterativeRobot {
 			shooterTalonOneBottom.set(.99);
 			shooterTalonTwoTop.set(.99);
 			shooterTalonTwoBottom.set(.99);
+			agitatorTalon.set(.99);
 		} else if (input.getTrigger("Operator-Left-Trigger")) {
 			shooterTalonOneTop.set(-.99);
 			shooterTalonOneBottom.set(-.99);
 			shooterTalonTwoTop.set(-.99);
 			shooterTalonTwoBottom.set(-.99);
+			agitatorTalon.set(-.99);
 		} else {
 			shooterTalonOneTop.set(0);
 			shooterTalonOneBottom.set(0);
 			shooterTalonTwoTop.set(0);
 			shooterTalonTwoBottom.set(0);
+			agitatorTalon.set(0);
 		}
 		
 		if (input.getButton("Operator-X-Button")) {
