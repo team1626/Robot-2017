@@ -132,8 +132,10 @@ public class Robot extends IterativeRobot {
 		DriverInput.nameInput("Driver-Left-Trigger");
 		DriverInput.nameInput("Driver-Right-Trigger");
 		DriverInput.nameInput("Operator-Left-Stick");
-		DriverInput.nameInput("Operator-Right-Stick");
+		DriverInput.nameInput("Operator-Left-Bumper");
 		DriverInput.nameInput("Operator-Left-Trigger");
+		DriverInput.nameInput("Operator-Right-Stick");
+		DriverInput.nameInput("Operator-Right-Bumper");
 		DriverInput.nameInput("Operator-Right-Trigger");
 		DriverInput.nameInput("Operator-X-Button");
 		DriverInput.nameInput("Operator-A-Button");
@@ -200,7 +202,11 @@ public class Robot extends IterativeRobot {
 				.withInput("Driver-Right", driverRight.getRawAxis(1))
 				.withInput("Driver-Left-Trigger", driverLeft.getRawButton(1))
 				.withInput("Driver-Right-Trigger", driverRight.getRawButton(1))
+				.withInput("Operator-Left-Stick", xbox.getRawAxis(1))
+				.withInput("Operator-Left-Bumper", xbox.getBumper(Hand.kLeft))
 				.withInput("Operator-Left-Trigger", xbox.getTrigger(Hand.kLeft))
+				.withInput("Operator-Right-Stick", xbox.getRawAxis(5))
+				.withInput("Operator-Right-Bumper", xbox.getBumper(Hand.kRight))
 				.withInput("Operator-Right-Trigger", xbox.getTrigger(Hand.kRight))
 				.withInput("Operator-X-Button", xbox.getXButton())
 				.withInput("Operator-Y-Button", xbox.getYButton())
@@ -264,6 +270,12 @@ public class Robot extends IterativeRobot {
 			shooterTalonTwoTop.set(0);
 			shooterTalonTwoBottom.set(0);
 			agitatorTalon.set(0);
+		}
+		
+		if (input.getButton("Operator-Right-Bumper")) {
+			driveTrainShifter.set(DoubleSolenoid.Value.kForward);
+		} else if (input.getButton("Operator-Left-Bumper")) {
+			driveTrainShifter.set(DoubleSolenoid.Value.kReverse);
 		}
 		
 		if (input.getButton("Operator-A-Button")) {
