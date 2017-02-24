@@ -3,13 +3,13 @@ package org.usfirst.frc.team1626.robot;
 /**
  * 
  * TargetCandidate.java
- * Uses code from user @jcbakerglm
+ * Tests image for:
+ * 		- Horizontal alignment with centerX
+ * 		- Tests
  * 
  */
 
 import org.opencv.core.Rect;
-
-//TODO: Take relative area of rectangle into account. Larger score higher.
 
 public class TargetCandidate {
 

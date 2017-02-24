@@ -1,11 +1,11 @@
 package org.usfirst.frc.team1626.robot;
 
-public class Toggle {
+public class ButtonAction {
 	
 	boolean toggleState;
 	boolean prevButtonState;
 	
-	public Toggle() {
+	public ButtonAction() {
 		toggleState=false;
 		prevButtonState=false;
 	}
@@ -24,7 +24,6 @@ public class Toggle {
 		} else {
 			toggleState = true;
 		}
-		
 		
 		return toggleState;
 	}

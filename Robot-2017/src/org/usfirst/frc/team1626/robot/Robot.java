@@ -51,9 +51,9 @@ public class Robot extends IterativeRobot {
 	private CANTalon shooterTalonTwoTop;
 	private CANTalon shooterTalonTwoBottom;
 	
-	private DoubleSolenoid gearShifter;
+	private DoubleSolenoid gearHandler;
 	private DoubleSolenoid driveTrainShifter;
-	Toggle highGear;
+	ButtonAction highGear;
 	
 	private AnalogInput pressureSensor;
 	
@@ -85,9 +85,9 @@ public class Robot extends IterativeRobot {
 		shooterTalonTwoTop       = new CANTalon(2);
 		shooterTalonTwoBottom    = new CANTalon(5);
 		
-		gearShifter			     = new DoubleSolenoid(6, 7);
+		gearHandler			     = new DoubleSolenoid(6, 7);
 		driveTrainShifter        = new DoubleSolenoid(4, 5);
-		highGear				 = new Toggle();
+		highGear				 = new ButtonAction();
 		
 		pressureSensor    		 = new AnalogInput(0);
 		
@@ -102,6 +102,7 @@ public class Robot extends IterativeRobot {
 			Mat mat = new Mat();
 			
 			while (!Thread.interrupted()) {
+				// If grab frame makes set 
 				if (cvSink.grabFrame(mat) == 0) {
 					outputStream.notifyError(cvSink.getError());
 					continue;
@@ -273,9 +274,9 @@ public class Robot extends IterativeRobot {
 		}
 		
 		if (input.getButton("Operator-Right-Bumper")) {
-			driveTrainShifter.set(DoubleSolenoid.Value.kForward);
+			gearHandler.set(DoubleSolenoid.Value.kForward);
 		} else if (input.getButton("Operator-Left-Bumper")) {
-			driveTrainShifter.set(DoubleSolenoid.Value.kReverse);
+			gearHandler.set(DoubleSolenoid.Value.kReverse);
 		}
 		
 		if (input.getButton("Operator-A-Button")) {
