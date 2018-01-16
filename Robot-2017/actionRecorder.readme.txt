@@ -1,0 +1,37 @@
+The autonomous code on this robot is based on the echo code that FRC team 1626 customized from
+the LabView code it got from ChiefDelphi as Team 1153's echo code, and then ported and, again,
+customized as the Java classes you see here.  The ActionRecorder class is constructed to be run
+in an IterativeRobot.  It is believed that the task (which is left to the reader) of porting this
+to a CommandRobot would be straightforward.
+
+There are two classes used in the implementation of the ActionRecorder (which also handles playback):
+
+	ActionRecorder
+	DriverInput
+	
+DriverInput is the simpler class.  It just encapsulates all of the driver inputs from joysticks
+and buttons at the driver's station as a collection of values.  Each input is given a name.  The
+inputs are attached to a DriverInput object by name.  The inputs can be retrieved from the
+DriverInput, as needed.
+
+ActionRecorder manages recording and playback of autonomous routines, including mechanisms for
+naming new autonomous recordings and selecting the recording to play back. On creation, buttons to
+toggle the record mode and to scroll through the list of autonomous programs are specified.
+
+The pattern is that there is a method, named when the ActionRecorder is instantiated, which is used
+both to implement normal robot behaviors in teleop, and to implement autonomous robot behaviors in
+autonomous mode.
+
+When the robot enters disabled mode, if the robot is recording, then that recording is stopped and
+written to disk.  Some analysis is done about how the timing of the previous playback behaved, and
+the list of available recordings is gathered.  Then, in the disabled periodic method, ActionRecorder
+watches the up, down, and recording buttons and takes the appropriate actions.
+
+When the robot enters teleop mode, if recording is enabled, the robot sets up the file to record the
+driver inputs.  During teleop mode, it is important that all of the driver inputs are used to create
+a DriverInput object, and that all of the robot controls are implemented in the method that is called
+by the ActionRecorder.input() method.  Anything that is coded outside of the robot operations method
+will not happen in autonomous.
+
+When the robot enters autonomous mode, the driver inputs are reloaded from the selected file, and are
+played back with timing that matches, as well as possible, the timing at recording.
